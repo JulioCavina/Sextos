@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2f282d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Sexto" />
+  <title>Sexto</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <section id="loadingView" class="view view-centered is-active">
+      <div class="brand-mark">S6</div>
+      <h1>Sexto</h1>
+      <p>Carregando...</p>
+    </section>
+
+    <section id="authView" class="view view-auth" aria-label="Login">
+      <div class="auth-card">
+        <div class="brand-mark">S6</div>
+        <h1>Sexto</h1>
+        <p class="subtitle">4 palavras de 6 letras. 10 tentativas.</p>
+
+        <div class="auth-tabs" role="tablist">
+          <button id="tabLogin" class="tab is-active" type="button">Entrar</button>
+          <button id="tabCreate" class="tab" type="button">Criar conta</button>
+        </div>
+
+        <form id="loginForm" class="auth-form is-active" autocomplete="on">
+          <label>
+            Usuário
+            <input id="loginUser" name="username" type="text" inputmode="text" autocomplete="username" placeholder="ex: julio" required />
+          </label>
+          <label>
+            Senha / PIN
+            <input id="loginPin" name="password" type="password" inputmode="numeric" autocomplete="current-password" maxlength="3" placeholder="123" required />
+          </label>
+          <button class="primary-button" type="submit">Entrar</button>
+        </form>
+
+        <form id="createForm" class="auth-form" autocomplete="off">
+          <label>
+            Nome de usuário
+            <input id="createUser" type="text" inputmode="text" placeholder="ex: julio" required />
+          </label>
+          <label>
+            Nome exibido
+            <input id="createName" type="text" inputmode="text" placeholder="ex: Júlio" />
+          </label>
+          <label>
+            PIN de 3 números
+            <input id="createPin" type="password" inputmode="numeric" maxlength="3" placeholder="123" required />
+          </label>
+          <button class="primary-button" type="submit">Criar e entrar</button>
+        </form>
+
+        <p id="authMessage" class="message" role="status"></p>
+      </div>
+    </section>
+
+    <section id="gameView" class="view view-game" aria-label="Jogo Sexto">
+      <header class="game-header">
+        <div>
+          <h1>Sexto</h1>
+          <p id="gameDate" class="tiny-text">--</p>
+        </div>
+        <button id="logoutButton" class="ghost-button" type="button">Sair</button>
+      </header>
+
+      <section class="score-strip" aria-label="Resumo do jogador">
+        <div class="score-card">
+          <span id="playerCurrentStreak">0</span>
+          <small>sua sequência</small>
+        </div>
+        <div class="score-card">
+          <span id="playerBestStreak">0</span>
+          <small>seu recorde</small>
+        </div>
+        <div class="score-card">
+          <span id="leaderCurrentStreak">-</span>
+          <small>líder atual</small>
+        </div>
+        <div class="score-card">
+          <span id="leaderBestStreak">-</span>
+          <small>recorde geral</small>
+        </div>
+      </section>
+
+      <main id="boards" class="boards-grid" aria-label="Tabuleiros"></main>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <section class="input-panel" aria-label="Entrada da palavra">
+        <div id="guessPreview" class="guess-preview" aria-label="Palavra atual"></div>
+        <div id="keyboard" class="keyboard" aria-label="Teclado virtual"></div>
+      </section>
+    </section>
+
+    <section id="resultView" class="view view-results" aria-label="Resultado">
+      <div class="result-card">
+        <h2 id="resultTitle">progresso</h2>
+        <p id="resultSubtitle" class="subtitle"></p>
+
+        <div class="progress-topline">
+          <div><strong id="statGames">0</strong><span>jogos</span></div>
+          <div><strong id="statWinPct">0%</strong><span>de vitórias</span></div>
+          <div><strong id="statCurrentStreak">0</strong><span>sequência</span></div>
+          <div><strong id="statBestStreak">0</strong><span>melhor sequência</span></div>
+        </div>
+
+        <h3>distribuição de tentativas</h3>
+        <div id="attemptDistribution" class="distribution"></div>
+
+        <div class="leader-box">
+          <div>
+            <small>maior sequência atual</small>
+            <strong id="modalLeaderCurrent">-</strong>
+          </div>
+          <div>
+            <small>maior sequência geral</small>
+            <strong id="modalLeaderBest">-</strong>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button id="shareButton" class="primary-button" type="button">Compartilhar</button>
+          <button id="backToGameButton" class="secondary-button" type="button">Ver tabuleiro</button>
+        </div>
+
+        <button id="retrySaveButton" class="warning-button hidden" type="button">Tentar salvar novamente</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
