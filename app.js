@@ -351,6 +351,7 @@
       state.finished = true;
       state.pendingFinalize = false;
       recomputeSolvedAt();
+      recomputeKeyStatus();
       state.finalResult = res.resultado || local?.finalResult || null;
       saveGameLocal();
       return;
@@ -362,6 +363,7 @@
       state.pendingFinalize = !!local.pendingFinalize;
       state.finalResult = local.finalResult || null;
       recomputeSolvedAt();
+      recomputeKeyStatus();
     } else {
       state.tentativas = [];
       state.solvedAt = [null, null, null, null];
@@ -410,9 +412,13 @@
     return result;
   }
 
-  function updateKeyStatus(guessNorm) {
+  function updateKeyStatus(guessNorm, attemptNumber) {
     const rank = { absent: 1, present: 2, correct: 3 };
     for (let b = 0; b < BOARD_COUNT; b++) {
+      // Depois que um tabuleiro já foi resolvido, as próximas tentativas não
+      // contam mais visualmente para ele. O teclado deve seguir a mesma regra.
+      if (state.solvedAt[b] && attemptNumber > state.solvedAt[b]) continue;
+
       const pattern = evaluateGuess(guessNorm, state.respostasNorm[b]);
       for (let i = 0; i < WORD_LENGTH; i++) {
         const l = guessNorm[i];
@@ -421,6 +427,13 @@
           state.keyStatus[l] = status;
         }
       }
+    }
+  }
+
+  function recomputeKeyStatus() {
+    state.keyStatus = {};
+    for (let i = 0; i < state.tentativas.length; i++) {
+      updateKeyStatus(normalizeWord(state.tentativas[i]), i + 1);
     }
   }
 
@@ -462,10 +475,12 @@
       grid.className = 'board-grid';
 
       for (let row = 0; row < MAX_ATTEMPTS; row++) {
-        const guess = state.tentativas[row] ? normalizeWord(state.tentativas[row]) : '';
-        const display = state.tentativas[row] || '';
+        const boardSolvedAt = state.solvedAt[b];
+        const shouldShowPastGuess = !!state.tentativas[row] && (!boardSolvedAt || row < boardSolvedAt);
+        const guess = shouldShowPastGuess ? normalizeWord(state.tentativas[row]) : '';
+        const display = shouldShowPastGuess ? (state.tentativas[row] || '') : '';
         const pattern = guess ? evaluateGuess(guess, state.respostasNorm[b]) : null;
-        const isCurrentRow = row === state.tentativas.length && !state.finished;
+        const isCurrentRow = row === state.tentativas.length && !state.finished && !boardSolvedAt;
         const current = isCurrentRow ? state.currentGuess : '';
         const currentDisplay = current.padEnd(WORD_LENGTH, ' ');
 
@@ -552,8 +567,8 @@
     const canonical = state.wordMap.get(guessNorm) || guessNorm;
     state.tentativas.push(canonical);
     state.currentGuess = '';
-    updateKeyStatus(guessNorm);
     recomputeSolvedAt();
+    recomputeKeyStatus();
     saveGameLocal();
     renderAll();
 
