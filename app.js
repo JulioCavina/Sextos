@@ -26,6 +26,7 @@
     tentativas: [],
     solvedAt: [null, null, null, null],
     currentGuess: '',
+    cursorIndex: 0,
     finished: false,
     finalResult: null,
     saving: false,
@@ -147,6 +148,8 @@
       data_jogo: state.dataJogo,
       partida_id: state.partidaId,
       tentativas: state.tentativas,
+      currentGuess: state.currentGuess,
+      cursorIndex: state.cursorIndex,
       solvedAt: state.solvedAt,
       finished: state.finished,
       finalResult: state.finalResult,
@@ -342,6 +345,7 @@
     state.ranking = res.ranking || {};
     state.partidaServidor = res.partida || {};
     state.currentGuess = '';
+    state.cursorIndex = 0;
     state.keyStatus = {};
 
     const serverAttempts = Array.isArray(res.partida?.tentativas) ? res.partida.tentativas : [];
@@ -364,12 +368,16 @@
       state.finished = !!local.finished;
       state.pendingFinalize = !!local.pendingFinalize;
       state.finalResult = local.finalResult || null;
+      state.currentGuess = sanitizeCurrentGuess(local.currentGuess || '');
+      state.cursorIndex = clampCursor(Number(local.cursorIndex || 0));
       recomputeSolvedAt();
       recomputeKeyStatus();
     } else {
       state.tentativas = [];
       state.solvedAt = [null, null, null, null];
       state.finished = false;
+      state.currentGuess = '';
+      state.cursorIndex = 0;
       state.pendingFinalize = false;
       state.finalResult = null;
       saveGameLocal();
@@ -441,6 +449,71 @@
     }
   }
 
+  function sanitizeCurrentGuess(value) {
+    const raw = String(value || '').slice(0, WORD_LENGTH);
+    const letters = Array(WORD_LENGTH).fill('');
+
+    if (raw.includes(' ')) {
+      for (let i = 0; i < WORD_LENGTH; i++) {
+        const letter = normalizeWord(raw[i] || '').slice(0, 1);
+        letters[i] = letter || '';
+      }
+    } else {
+      const clean = normalizeWord(raw).slice(0, WORD_LENGTH);
+      for (let i = 0; i < clean.length; i++) letters[i] = clean[i];
+    }
+
+    return letters.map(l => l || ' ').join('');
+  }
+
+  function getCurrentLetters() {
+    const letters = Array(WORD_LENGTH).fill('');
+    const raw = String(state.currentGuess || '').padEnd(WORD_LENGTH, ' ').slice(0, WORD_LENGTH);
+
+    for (let i = 0; i < WORD_LENGTH; i++) {
+      const letter = normalizeWord(raw[i] || '').slice(0, 1);
+      letters[i] = letter || '';
+    }
+
+    return letters;
+  }
+
+  function setCurrentLetters(letters) {
+    state.currentGuess = Array.from({ length: WORD_LENGTH }, (_, i) => normalizeWord(letters[i] || '').slice(0, 1) || ' ').join('');
+  }
+
+  function clampCursor(index) {
+    const value = Number.isFinite(index) ? index : 0;
+    return Math.max(0, Math.min(WORD_LENGTH - 1, Math.trunc(value)));
+  }
+
+  function setCursor(index, shouldRender = true) {
+    if (state.finished || state.saving) return;
+    state.cursorIndex = clampCursor(index);
+    saveGameLocal();
+    if (shouldRender) renderAll();
+  }
+
+  function nextCursorAfter(index, letters) {
+    for (let i = index + 1; i < WORD_LENGTH; i++) {
+      if (!letters[i]) return i;
+    }
+    for (let i = 0; i <= index; i++) {
+      if (!letters[i]) return i;
+    }
+    return clampCursor(index);
+  }
+
+  function previousCursorBefore(index, letters) {
+    for (let i = index - 1; i >= 0; i--) {
+      if (letters[i]) return i;
+    }
+    for (let i = index - 1; i >= 0; i--) {
+      if (!letters[i]) return i;
+    }
+    return Math.max(0, index - 1);
+  }
+
   function renderAll() {
     renderHeaderStats();
     renderBoards();
@@ -465,6 +538,7 @@
 
   function renderBoards() {
     els.boards.innerHTML = '';
+    const currentLetters = getCurrentLetters();
 
     for (let b = 0; b < BOARD_COUNT; b++) {
       const board = document.createElement('section');
@@ -485,19 +559,28 @@
         const display = shouldShowPastGuess ? (state.tentativas[row] || '') : '';
         const pattern = guess ? evaluateGuess(guess, state.respostasNorm[b]) : null;
         const isCurrentRow = row === state.tentativas.length && !state.finished && !boardSolvedAt;
-        const current = isCurrentRow ? state.currentGuess : '';
-        const currentDisplay = current.padEnd(WORD_LENGTH, ' ');
 
         for (let col = 0; col < WORD_LENGTH; col++) {
-          const tile = document.createElement('div');
+          const tile = document.createElement('button');
+          tile.type = 'button';
           tile.className = 'tile';
+          tile.setAttribute('aria-label', `Palavra ${b + 1}, tentativa ${row + 1}, posição ${col + 1}`);
+
           if (guess) {
             const char = (display[col] || guess[col] || '').toLocaleUpperCase('pt-BR');
             tile.textContent = char;
             tile.classList.add('filled', pattern[col]);
-          } else if (isCurrentRow && currentDisplay[col] && currentDisplay[col] !== ' ') {
-            tile.textContent = currentDisplay[col].toLocaleUpperCase('pt-BR');
-            tile.classList.add('filled', 'current');
+            tile.disabled = true;
+          } else if (isCurrentRow) {
+            tile.classList.add('selectable');
+            if (col === state.cursorIndex) tile.classList.add('cursor');
+            if (currentLetters[col]) {
+              tile.textContent = currentLetters[col].toLocaleUpperCase('pt-BR');
+              tile.classList.add('filled', 'current');
+            }
+            tile.addEventListener('click', () => setCursor(col));
+          } else {
+            tile.disabled = true;
           }
           grid.appendChild(tile);
         }
@@ -509,14 +592,8 @@
   }
 
   function renderGuessPreview() {
+    if (!els.guessPreview) return;
     els.guessPreview.innerHTML = '';
-    const padded = state.currentGuess.padEnd(WORD_LENGTH, ' ');
-    for (let i = 0; i < WORD_LENGTH; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'preview-cell';
-      cell.textContent = padded[i] !== ' ' ? padded[i].toLocaleUpperCase('pt-BR') : '';
-      els.guessPreview.appendChild(cell);
-    }
   }
 
   function renderKeyboard() {
@@ -559,17 +636,35 @@
   function handleKey(key) {
     if (state.finished || state.saving) return;
     if (key === 'enter') return submitGuess();
+
+    const letters = getCurrentLetters();
+
     if (key === 'back') {
-      state.currentGuess = state.currentGuess.slice(0, -1);
-    } else if (/^[a-z]$/.test(key) && state.currentGuess.length < WORD_LENGTH) {
-      state.currentGuess += key;
+      if (letters[state.cursorIndex]) {
+        letters[state.cursorIndex] = '';
+      } else {
+        const prev = previousCursorBefore(state.cursorIndex, letters);
+        state.cursorIndex = clampCursor(prev);
+        letters[state.cursorIndex] = '';
+      }
+      setCurrentLetters(letters);
+    } else if (/^[a-z]$/.test(key)) {
+      letters[state.cursorIndex] = key;
+      state.cursorIndex = nextCursorAfter(state.cursorIndex, letters);
+      setCurrentLetters(letters);
     }
-    renderBoards();
-    renderGuessPreview();
+
+    saveGameLocal();
+    renderAll();
   }
 
   function submitGuess() {
-    const guessNorm = normalizeWord(state.currentGuess);
+    const letters = getCurrentLetters();
+    if (letters.some(l => !l)) {
+      showToast(`Preencha as ${WORD_LENGTH} letras antes de enviar.`, 'error');
+      return;
+    }
+    const guessNorm = normalizeWord(letters.join(''));
     if (guessNorm.length !== WORD_LENGTH) {
       showToast(`Digite uma palavra com ${WORD_LENGTH} letras.`, 'error');
       return;
@@ -583,6 +678,7 @@
     const canonical = state.wordMap.get(guessNorm) || guessNorm;
     state.tentativas.push(canonical);
     state.currentGuess = '';
+    state.cursorIndex = 0;
     recomputeSolvedAt();
     recomputeKeyStatus();
     saveGameLocal();
@@ -650,7 +746,7 @@
       : venceu === true
         ? `Você venceu em ${result.tentativas_usadas || state.tentativas.length} tentativas.`
         : venceu === false
-          ? 'Você não acertou todas hoje.'
+          ? 'Você foi Sextado.'
           : 'Resultado do jogador.';
 
     els.statGames.textContent = Number(ficha.total_jogos || 0);
@@ -702,25 +798,17 @@
 
   function buildShareText() {
     const venceu = state.solvedAt.every(Boolean);
-    const header = `Sexto ${formatDisplayDate(state.dataJogo)} ${venceu ? '🔥' : '☠'} ${state.tentativas.length}/${MAX_ATTEMPTS}`;
-    const lines = [header, ''];
-
-    for (let row = 0; row < state.tentativas.length; row++) {
-      const parts = [];
-      const guess = normalizeWord(state.tentativas[row]);
-      for (let b = 0; b < BOARD_COUNT; b++) {
-        if (state.solvedAt[b] && row + 1 > state.solvedAt[b]) {
-          parts.push('⬛'.repeat(WORD_LENGTH));
-        } else {
-          parts.push(evaluateGuess(guess, state.respostasNorm[b]).map(emojiForStatus).join(''));
-        }
-      }
-      lines.push(parts.join(' '));
-    }
-
-    lines.push('');
-    lines.push(window.location.href.split('#')[0]);
-    return lines.join('\n');
+    const ficha = state.finalResult?.ficha || state.ficha || {};
+    const nome = state.session?.nome || state.session?.usuario || 'jogador';
+    const tentativas = state.finalResult?.tentativas_usadas || state.tentativas.length;
+    const linhas = [
+      `Sexto — ${formatDisplayDate(state.dataJogo)}`,
+      `Resultado: ${venceu ? 'venceu' : 'foi Sextado'}`,
+      `Tentativas: ${tentativas}/${MAX_ATTEMPTS}`,
+      `Score de ${nome}: ${Number(ficha.total_jogos || 0)} jogos · ${Number(ficha.pct_vitorias || 0)}% vitórias · sequência ${Number(ficha.sequencia_vitorias_atual || 0)} · recorde ${Number(ficha.melhor_sequencia || 0)}`,
+      window.location.href.split('#')[0]
+    ];
+    return linhas.join('\n');
   }
 
   function roundRect(ctx, x, y, w, h, r) {
