@@ -30,7 +30,8 @@
     finalResult: null,
     saving: false,
     keyStatus: {},
-    pendingFinalize: false
+    pendingFinalize: false,
+    finishedBoardReturnArmed: false
   };
 
   const $ = (id) => document.getElementById(id);
@@ -319,6 +320,7 @@
 
       if (state.finished) {
         renderResults(state.finalResult || res.resultado || null);
+        state.finishedBoardReturnArmed = false;
         showView('results');
       } else if (state.pendingFinalize) {
         showToast('Resultado pendente de envio. Tentando salvar...', 'error');
@@ -423,8 +425,10 @@
       for (let i = 0; i < WORD_LENGTH; i++) {
         const l = guessNorm[i];
         const status = pattern[i];
-        if (!state.keyStatus[l] || rank[status] > rank[state.keyStatus[l]]) {
-          state.keyStatus[l] = status;
+        if (!state.keyStatus[l]) state.keyStatus[l] = Array(BOARD_COUNT).fill('');
+        const atual = state.keyStatus[l][b] || '';
+        if (!atual || rank[status] > rank[atual]) {
+          state.keyStatus[l][b] = status;
         }
       }
     }
@@ -531,8 +535,20 @@
         btn.type = 'button';
         btn.className = 'key';
         if (key === 'enter' || key === 'back') btn.classList.add('big');
-        if (key.length === 1 && state.keyStatus[key]) btn.classList.add(state.keyStatus[key]);
-        btn.textContent = key === 'enter' ? 'ENTER' : key === 'back' ? '⌫' : key.toUpperCase();
+
+        if (key.length === 1) {
+          btn.classList.add('letter-key');
+          const statuses = state.keyStatus[key] || Array(BOARD_COUNT).fill('');
+          btn.innerHTML = `
+            <span class="key-letter">${key.toUpperCase()}</span>
+            <span class="key-segments" aria-hidden="true">
+              ${statuses.map(status => `<i class="seg ${status || 'unknown'}"></i>`).join('')}
+            </span>
+          `;
+        } else {
+          btn.textContent = key === 'enter' ? 'ENTER' : '⌫';
+        }
+
         btn.addEventListener('click', () => handleKey(key));
         rowEl.appendChild(btn);
       }
@@ -609,12 +625,14 @@
       saveGameLocal();
       renderHeaderStats();
       renderResults(res);
+      state.finishedBoardReturnArmed = false;
       showView('results');
     } catch (err) {
       state.pendingFinalize = true;
       saveGameLocal();
       renderResults({ ok: false, erro: err.message, ficha: state.ficha, ranking: state.ranking });
       els.retrySaveButton.classList.remove('hidden');
+      state.finishedBoardReturnArmed = false;
       showView('results');
     } finally {
       state.saving = false;
@@ -626,11 +644,11 @@
     const ranking = result?.ranking || state.ranking || {};
     const venceu = result?.venceu;
 
-    els.resultTitle.textContent = 'progresso';
+    els.resultTitle.textContent = 'Progresso';
     els.resultSubtitle.textContent = result?.erro
       ? `Resultado ainda não salvo: ${result.erro}`
       : venceu === true
-        ? `Você venceu em ${result.tentativas_usadas || state.tentativas.length} tentativa(s).`
+        ? `Você venceu em ${result.tentativas_usadas || state.tentativas.length} tentativas.`
         : venceu === false
           ? 'Você não acertou todas hoje.'
           : 'Resultado do jogador.';
@@ -651,12 +669,13 @@
 
   function renderDistribution(dist) {
     els.attemptDistribution.innerHTML = '';
+    const firstPossible = BOARD_COUNT;
     const values = [];
-    for (let i = 1; i <= MAX_ATTEMPTS; i++) values.push(Number(dist[i] || 0));
+    for (let i = firstPossible; i <= MAX_ATTEMPTS; i++) values.push(Number(dist[i] || 0));
     values.push(Number(dist.perdas || 0));
     const max = Math.max(1, ...values);
 
-    for (let i = 1; i <= MAX_ATTEMPTS; i++) {
+    for (let i = firstPossible; i <= MAX_ATTEMPTS; i++) {
       addDistRow(String(i), Number(dist[i] || 0), max);
     }
     addDistRow('☠', Number(dist.perdas || 0), max);
@@ -674,22 +693,139 @@
     els.attemptDistribution.appendChild(row);
   }
 
-  async function shareResult() {
-    const linhas = [];
+  function emojiForStatus(status) {
+    if (status === 'correct') return '🟩';
+    if (status === 'present') return '🟨';
+    if (status === 'absent') return '⬛';
+    return '⬛';
+  }
+
+  function buildShareText() {
     const venceu = state.solvedAt.every(Boolean);
-    linhas.push(`Sexto ${formatDisplayDate(state.dataJogo)}`);
-    linhas.push(venceu ? `Venci em ${state.tentativas.length}/${MAX_ATTEMPTS}` : `Não completei em ${MAX_ATTEMPTS}`);
-    linhas.push(`Sequência: ${state.ficha?.sequencia_vitorias_atual || 0}`);
-    const text = linhas.join('\n');
+    const header = `Sexto ${formatDisplayDate(state.dataJogo)} ${venceu ? '🔥' : '☠'} ${state.tentativas.length}/${MAX_ATTEMPTS}`;
+    const lines = [header, ''];
+
+    for (let row = 0; row < state.tentativas.length; row++) {
+      const parts = [];
+      const guess = normalizeWord(state.tentativas[row]);
+      for (let b = 0; b < BOARD_COUNT; b++) {
+        if (state.solvedAt[b] && row + 1 > state.solvedAt[b]) {
+          parts.push('⬛'.repeat(WORD_LENGTH));
+        } else {
+          parts.push(evaluateGuess(guess, state.respostasNorm[b]).map(emojiForStatus).join(''));
+        }
+      }
+      lines.push(parts.join(' '));
+    }
+
+    lines.push('');
+    lines.push(window.location.href.split('#')[0]);
+    return lines.join('\n');
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+  }
+
+  function createShareImageBlob() {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const scale = 2;
+      const width = 720;
+      const height = 520;
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+
+      const colors = {
+        bg: '#6f6068',
+        card: '#75666e',
+        empty: '#342d32',
+        correct: '#45b7a8',
+        present: '#e0b765',
+        absent: '#342d32',
+        text: '#f7f2f6',
+        muted: '#d8ced5'
+      };
+
+      ctx.fillStyle = colors.bg;
+      ctx.fillRect(0, 0, width, height);
+      roundRect(ctx, 18, 18, width - 36, height - 36, 14);
+      ctx.fillStyle = colors.card;
+      ctx.fill();
+
+      ctx.fillStyle = colors.text;
+      ctx.textAlign = 'center';
+      ctx.font = '700 30px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillText(`Sexto ${formatDisplayDate(state.dataJogo)}`, width / 2, 64);
+
+      const boardW = 148;
+      const gap = 18;
+      const startX = (width - (boardW * 4 + gap * 3)) / 2;
+      const startY = 100;
+      const cell = 18;
+      const cellGap = 5;
+      const solved = state.solvedAt.every(Boolean);
+
+      for (let b = 0; b < BOARD_COUNT; b++) {
+        const x0 = startX + b * (boardW + gap);
+        ctx.fillStyle = colors.muted;
+        ctx.font = '700 14px system-ui, -apple-system, Segoe UI, sans-serif';
+        ctx.fillText(String(b + 1), x0 + boardW / 2, startY - 12);
+
+        for (let row = 0; row < MAX_ATTEMPTS; row++) {
+          let pattern = null;
+          if (state.tentativas[row] && (!state.solvedAt[b] || row + 1 <= state.solvedAt[b])) {
+            pattern = evaluateGuess(normalizeWord(state.tentativas[row]), state.respostasNorm[b]);
+          }
+          for (let col = 0; col < WORD_LENGTH; col++) {
+            const status = pattern ? pattern[col] : 'empty';
+            ctx.fillStyle = colors[status] || colors.empty;
+            roundRect(ctx, x0 + col * (cell + cellGap), startY + row * (cell + cellGap), cell, cell, 4);
+            ctx.fill();
+          }
+        }
+      }
+
+      ctx.fillStyle = colors.text;
+      ctx.textAlign = 'left';
+      ctx.font = '700 25px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillText(solved ? `🔥 ${state.tentativas.length}/${MAX_ATTEMPTS}` : `☠ ${state.tentativas.length}/${MAX_ATTEMPTS}`, 48, 468);
+      ctx.textAlign = 'right';
+      ctx.font = '700 18px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillText('Sexto', width - 48, 466);
+      ctx.font = '500 14px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.fillStyle = colors.muted;
+      ctx.fillText(window.location.host || 'sexto', width - 48, 488);
+
+      canvas.toBlob((blob) => resolve(blob), 'image/png', 0.95);
+    });
+  }
+
+  async function shareResult() {
+    const text = buildShareText();
 
     try {
-      if (navigator.share) await navigator.share({ text });
-      else {
+      const blob = await createShareImageBlob();
+      const file = blob ? new File([blob], `sexto-${state.dataJogo || 'resultado'}.png`, { type: 'image/png' }) : null;
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], text, title: 'Sexto' });
+      } else if (navigator.share) {
+        await navigator.share({ text, title: 'Sexto' });
+      } else {
         await navigator.clipboard.writeText(text);
         showToast('Resultado copiado.', 'success');
       }
     } catch (err) {
-      // Usuário cancelou compartilhamento.
+      // Usuário cancelou compartilhamento ou o navegador não permitiu.
     }
   }
 
@@ -703,9 +839,20 @@
       showView('auth');
       setAuthMessage('Sessão encerrada.');
     });
-    els.backToGameButton.addEventListener('click', () => showView('game'));
+    els.backToGameButton.addEventListener('click', () => {
+      state.finishedBoardReturnArmed = true;
+      showView('game');
+      showToast('Toque no tabuleiro para voltar ao placar.', 'success');
+    });
     els.shareButton.addEventListener('click', shareResult);
     els.retrySaveButton.addEventListener('click', finalizeGame);
+    els.gameView.addEventListener('click', (event) => {
+      if (!state.finished || !state.finishedBoardReturnArmed) return;
+      if (event.target.closest('button')) return;
+      state.finishedBoardReturnArmed = false;
+      renderResults(state.finalResult || { ficha: state.ficha, ranking: state.ranking, venceu: state.solvedAt.every(Boolean), tentativas_usadas: state.tentativas.length });
+      showView('results');
+    });
 
     window.addEventListener('keydown', (event) => {
       if (!els.gameView.classList.contains('is-active')) return;
