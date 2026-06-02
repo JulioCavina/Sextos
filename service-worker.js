@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sexto-cache-v4';
+const CACHE_NAME = 'sexto-cache-v5';
 const APP_SHELL = [
   './',
   './index.html',

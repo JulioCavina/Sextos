@@ -65,36 +65,38 @@
     </section>
 
     <section id="gameView" class="view view-game" aria-label="Jogo Sexto">
-      <header class="game-header">
-        <div>
-          <h1>Sexto</h1>
-          <p id="gameDate" class="tiny-text">--</p>
-        </div>
-        <button id="logoutButton" class="ghost-button" type="button">Sair</button>
-      </header>
+      <div id="gameScroll" class="game-scroll">
+        <header class="game-header">
+          <div>
+            <h1>Sexto</h1>
+            <p id="gameDate" class="tiny-text">--</p>
+          </div>
+          <button id="logoutButton" class="ghost-button" type="button">Sair</button>
+        </header>
 
-      <section class="score-strip" aria-label="Resumo do jogador">
-        <div class="score-card">
-          <span id="playerCurrentStreak">0</span>
-          <small>sua sequência</small>
-        </div>
-        <div class="score-card">
-          <span id="playerBestStreak">0</span>
-          <small>seu recorde</small>
-        </div>
-        <div class="score-card">
-          <span id="leaderCurrentStreak">-</span>
-          <small>líder atual</small>
-        </div>
-        <div class="score-card">
-          <span id="leaderBestStreak">-</span>
-          <small>recorde geral</small>
-        </div>
-      </section>
+        <section class="score-strip" aria-label="Resumo do jogador">
+          <div class="score-card">
+            <span id="playerCurrentStreak">0</span>
+            <small>sua sequência</small>
+          </div>
+          <div class="score-card">
+            <span id="playerBestStreak">0</span>
+            <small>seu recorde</small>
+          </div>
+          <div class="score-card">
+            <span id="leaderCurrentStreak">-</span>
+            <small>líder atual</small>
+          </div>
+          <div class="score-card">
+            <span id="leaderBestStreak">-</span>
+            <small>recorde geral</small>
+          </div>
+        </section>
 
-      <main id="boards" class="boards-grid" aria-label="Tabuleiros"></main>
+        <main id="boards" class="boards-grid" aria-label="Tabuleiros"></main>
 
-      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      </div>
 
       <section class="input-panel" aria-label="Entrada da palavra">
         <div id="keyboard" class="keyboard" aria-label="Teclado virtual"></div>

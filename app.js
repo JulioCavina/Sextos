@@ -53,6 +53,7 @@
     toast: $('toast'),
     logoutButton: $('logoutButton'),
     gameDate: $('gameDate'),
+    gameScroll: $('gameScroll'),
     playerCurrentStreak: $('playerCurrentStreak'),
     playerBestStreak: $('playerBestStreak'),
     leaderCurrentStreak: $('leaderCurrentStreak'),
@@ -176,15 +177,16 @@
     els.authMessage.className = `message ${type}`.trim();
   }
 
-  function showToast(text, type = '') {
+  function showToast(text, type = '', durationMs = 2400) {
+    window.clearTimeout(showToast._timer);
     els.toast.textContent = text || '';
     els.toast.className = `toast ${type}`.trim();
-    if (text) {
-      window.clearTimeout(showToast._timer);
+
+    if (text && durationMs > 0) {
       showToast._timer = window.setTimeout(() => {
         els.toast.textContent = '';
         els.toast.className = 'toast';
-      }, 2400);
+      }, durationMs);
     }
   }
 
@@ -596,6 +598,30 @@
     els.guessPreview.innerHTML = '';
   }
 
+  function getKeyboardStatusesForRender(letter) {
+    const statuses = (state.keyStatus[letter] || Array(BOARD_COUNT).fill('')).slice(0, BOARD_COUNT);
+    while (statuses.length < BOARD_COUNT) statuses.push('');
+
+    const hasAnyInformation = statuses.some(Boolean);
+    if (!hasAnyInformation) return statuses;
+
+    // Quando alguns tabuleiros já foram resolvidos, eles deixam de receber
+    // tentativas novas. Se todas as palavras ainda abertas já têm informação
+    // para essa letra, os quadrantes sem informação passam a aparecer como
+    // ausentes, evitando o visual de "quadrante não feito" no fim da partida.
+    const openBoards = [];
+    for (let b = 0; b < BOARD_COUNT; b++) {
+      if (!state.solvedAt[b]) openBoards.push(b);
+    }
+
+    const allOpenBoardsKnown = openBoards.length === 0 || openBoards.every(b => !!statuses[b]);
+    if (allOpenBoardsKnown) {
+      return statuses.map(status => status || 'absent');
+    }
+
+    return statuses;
+  }
+
   function renderKeyboard() {
     const rows = [
       ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -615,7 +641,7 @@
 
         if (key.length === 1) {
           btn.classList.add('letter-key');
-          const statuses = state.keyStatus[key] || Array(BOARD_COUNT).fill('');
+          const statuses = getKeyboardStatusesForRender(key);
           btn.innerHTML = `
             <span class="key-letter">${key.toUpperCase()}</span>
             <span class="key-segments" aria-hidden="true">
@@ -705,7 +731,7 @@
     renderAll();
 
     try {
-      showToast('Salvando resultado...');
+      showToast('Salvando resultado...', 'success', 0);
       const res = await apiCall({
         acao: 'finalizarPartida',
         token: state.session.token,
@@ -722,6 +748,7 @@
       renderHeaderStats();
       renderResults(res);
       state.finishedBoardReturnArmed = false;
+      showToast('', '');
       showView('results');
     } catch (err) {
       state.pendingFinalize = true;
@@ -729,6 +756,7 @@
       renderResults({ ok: false, erro: err.message, ficha: state.ficha, ranking: state.ranking });
       els.retrySaveButton.classList.remove('hidden');
       state.finishedBoardReturnArmed = false;
+      showToast('', '');
       showView('results');
     } finally {
       state.saving = false;
@@ -797,18 +825,16 @@
   }
 
   function buildShareText() {
-    const venceu = state.solvedAt.every(Boolean);
     const ficha = state.finalResult?.ficha || state.ficha || {};
-    const nome = state.session?.nome || state.session?.usuario || 'jogador';
     const tentativas = state.finalResult?.tentativas_usadas || state.tentativas.length;
-    const linhas = [
-      `Sexto — ${formatDisplayDate(state.dataJogo)}`,
-      `Resultado: ${venceu ? 'venceu' : 'foi Sextado'}`,
+    const scoreAtual = Number(ficha.sequencia_vitorias_atual || 0);
+    const shareUrl = CONFIG.SHARE_URL || window.location.href.split('#')[0];
+
+    return [
+      `Sexto — ${formatDisplayDate(state.dataJogo)} 🔥 ${scoreAtual}`,
       `Tentativas: ${tentativas}/${MAX_ATTEMPTS}`,
-      `Score de ${nome}: ${Number(ficha.total_jogos || 0)} jogos · ${Number(ficha.pct_vitorias || 0)}% vitórias · sequência ${Number(ficha.sequencia_vitorias_atual || 0)} · recorde ${Number(ficha.melhor_sequencia || 0)}`,
-      window.location.href.split('#')[0]
-    ];
-    return linhas.join('\n');
+      shareUrl
+    ].join('\n');
   }
 
   function roundRect(ctx, x, y, w, h, r) {

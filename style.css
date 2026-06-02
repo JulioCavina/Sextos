@@ -19,7 +19,7 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-body { overflow-x: hidden; }
+body { overflow-x: hidden; overscroll-behavior: none; }
 button, input { font: inherit; }
 button { border: 0; cursor: pointer; }
 
@@ -56,6 +56,8 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .warning-button { background: #9d6530; width: 100%; margin-top: 12px; }
 
 .view-game { display: none; flex-direction: column; padding: calc(6px + var(--safe-top)) 8px calc(6px + var(--safe-bottom)); max-width: 430px; height: 100svh; overflow: hidden; margin: 0 auto; }
+.game-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding-bottom: 6px; scrollbar-width: none; }
+.game-scroll::-webkit-scrollbar { display: none; }
 .view-game.is-active { display: flex; }
 .game-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 2px 5px; flex: 0 0 auto; }
 .game-header h1 { margin: 0; font-size: 24px; letter-spacing: -1px; }
@@ -64,7 +66,7 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .score-card span { display: block; font-size: 15px; font-weight: 950; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .score-card small { display: block; color: var(--muted); font-size: 9px; line-height: 1.05; margin-top: 4px; }
 
-.boards-grid { display: grid; grid-template-columns: repeat(2, minmax(124px, 142px)); gap: 6px 8px; align-items: start; justify-content: center; flex: 0 1 auto; overflow: hidden; }
+.boards-grid { display: grid; grid-template-columns: repeat(2, minmax(124px, 142px)); gap: 6px 8px; align-items: start; justify-content: center; }
 .board { background: rgba(255,255,255,0.055); border: 1px solid var(--line); border-radius: 12px; padding: 5px; }
 .board.solved { outline: 2px solid rgba(58,167,87,0.55); }
 .board-title { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 8px; font-weight: 900; text-transform: uppercase; margin: 0 1px 3px; }
@@ -79,11 +81,11 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .tile.selectable { cursor: pointer; }
 .tile.cursor { outline: 2px solid rgba(22,156,234,0.92); outline-offset: 1px; }
 
-.toast { min-height: 24px; display: grid; place-items: center; color: var(--muted); font-size: 12px; font-weight: 800; text-align: center; padding: 2px 4px; flex: 0 0 auto; }
+.toast { min-height: 24px; display: grid; place-items: center; color: var(--muted); font-size: 12px; font-weight: 800; text-align: center; padding: 2px 4px; position: sticky; bottom: 0; z-index: 5; background: linear-gradient(180deg, rgba(47,40,45,0), rgba(47,40,45,0.96) 28%); }
 .toast.error { color: var(--bad); }
 .toast.success { color: #8df7ab; }
 
-.input-panel { margin-top: auto; padding-top: 3px; flex: 0 0 auto; }
+.input-panel { margin-top: 0; padding-top: 5px; flex: 0 0 auto; background: var(--bg); box-shadow: 0 -10px 24px rgba(47,40,45,0.88); }
 .guess-preview { display: none; }
 .preview-cell { width: 28px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); display: grid; place-items: center; font-size: 18px; font-weight: 950; text-transform: uppercase; }
 .keyboard { display: flex; flex-direction: column; gap: 5px; user-select: none; }
@@ -92,7 +94,7 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .key.big { flex: 1.65; max-width: 56px; font-size: 11px; }
 .key.correct { background: var(--green); }
 .key.present { background: var(--yellow); }
- .key.absent { background: #3f3940; color: #9b9399; }
+.key.absent { background: #3f3940; color: #9b9399; }
 .key.letter-key { background: #5b5359; }
 .key-letter { position: relative; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
 .key-segments { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; z-index: 1; opacity: 0.92; }
