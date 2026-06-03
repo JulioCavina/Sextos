@@ -190,8 +190,6 @@ adoeça
 adoece
 adoeci
 adoeço
-adonai
-adônis
 adorai
 adoram
 adorar
@@ -309,7 +307,6 @@ agitei
 agitem
 agites
 agitou
-agnelo
 agonia
 agosto
 agoura
@@ -327,7 +324,6 @@ agrião
 agrida
 agride
 agrido
-agripa
 agrupa
 agrupe
 aguada
@@ -339,8 +335,6 @@ agudas
 águias
 agulha
 aikido
-aimará
-aimoré
 ajamos
 ajeita
 ajeite
@@ -368,16 +362,13 @@ alarga
 alargo
 alarma
 alarme
-alasca
 alaúde
-albano
 albedo
 albina
 albino
 alçada
 alçado
 alçava
-alcino
 álcool
 alcova
 aldeão
@@ -397,7 +388,6 @@ alento
 alerta
 alerte
 alerto
-alexia
 alface
 alfafa
 alfama
@@ -429,8 +419,6 @@ alivia
 alivie
 alivio
 alívio
-allure
-almada
 almeja
 almeje
 almejo
@@ -447,8 +435,6 @@ alonga
 alongo
 aloque
 alpaca
-alpina
-alpino
 alteia
 altera
 altere
@@ -530,7 +516,6 @@ amplio
 amplos
 ampola
 amputa
-anarco
 ancião
 ancora
 âncora
@@ -592,7 +577,6 @@ anulei
 anulem
 anulou
 anzóis
-apache
 apagai
 apagam
 apagão
@@ -681,14 +665,10 @@ aquela
 àquela
 aquele
 àquele
-áquila
 aquilo
 àquilo
 aquoso
 árabes
-arabia
-arábia
-aragão
 arando
 aranha
 araque
@@ -752,7 +732,6 @@ arruda
 arruma
 arrume
 arrumo
-ártico
 artigo
 arvora
 arvore
@@ -784,7 +763,6 @@ assuma
 assume
 assumi
 assumo
-asteca
 astral
 astros
 astuto
@@ -797,9 +775,6 @@ atalho
 atando
 ataque
 ataram
-ataúde
-ataxia
-atchim
 ateado
 ateiam
 ateias
@@ -943,7 +918,6 @@ bacana
 bacano
 bacias
 bacilo
-backup
 badala
 badalo
 bafafá
@@ -972,7 +946,6 @@ bajula
 balaço
 balada
 balaio
-balboa
 balcão
 baldio
 baleal
@@ -982,7 +955,6 @@ balela
 baleou
 balido
 balões
-baltar
 bambas
 bambus
 banana
@@ -1004,7 +976,6 @@ banhos
 banhou
 banias
 banido
-banner
 banque
 barata
 barato
@@ -1012,7 +983,6 @@ barbas
 barcas
 barcos
 bardos
-barman
 barral
 barram
 barrar
@@ -1054,7 +1024,6 @@ batuco
 batuta
 bávaro
 bazuca
-beagle
 bêbado
 bebais
 bêbeda
@@ -1094,7 +1063,6 @@ benzer
 benzeu
 benzia
 berços
-berlim
 berram
 berrar
 berrei
@@ -1132,10 +1100,7 @@ bisões
 bispos
 bistrô
 bitola
-bitter
 bituca
-blanco
-blazer
 blefar
 blefes
 blefou
@@ -1156,13 +1121,11 @@ boceje
 bocejo
 boceta
 bodega
-boeing
 boemia
 boêmia
 boêmio
 boiada
 boiava
-boiler
 boinas
 boiola
 bolada
@@ -1209,7 +1172,6 @@ borrou
 bósnio
 bosque
 bostas
-boston
 botado
 botará
 botava
@@ -1232,7 +1194,6 @@ branda
 brande
 brandi
 brando
-brandy
 brasão
 brasas
 brasis
@@ -1246,7 +1207,6 @@ brecou
 brejos
 breque
 bretão
-bridge
 brigam
 brigão
 brigar
@@ -1267,7 +1227,6 @@ brocar
 brocas
 brocha
 broche
-broker
 bronca
 bronco
 bronha
@@ -1278,7 +1237,6 @@ brotem
 brotos
 brotou
 bruços
-brunch
 brusca
 brusco
 brutal
@@ -1287,21 +1245,16 @@ brutos
 bruxas
 bruxos
 buchas
-budget
 bueiro
-buenos
 bufado
 búfalo
-buffer
 bugres
 bulcão
 bumbum
 bundão
 bundas
-bunker
 buquês
 buraco
-bureau
 burgos
 burlam
 burlar
@@ -1317,10 +1270,8 @@ buscou
 busque
 bustos
 butano
-button
 buzina
 buzino
-bypass
 cabaça
 cabaço
 cabala
@@ -1474,7 +1425,6 @@ cantos
 cantou
 canudo
 cânula
-canyon
 caolho
 capado
 capelo
@@ -1608,7 +1558,6 @@ célere
 célula
 cênico
 censor
-center
 centra
 centre
 centro
@@ -1685,7 +1634,6 @@ cheira
 cheire
 cheiro
 cheque
-cherry
 chiado
 chiava
 chicas
@@ -1791,13 +1739,10 @@ clarim
 claros
 classe
 clicar
-clichê
 clímax
-clinch
 clique
 cloaca
 clonar
-closet
 coação
 coador
 coagem
@@ -1825,8 +1770,6 @@ cocada
 coçado
 cocais
 coçava
-cóccix
-cóclea
 códice
 código
 coelha
@@ -1937,8 +1880,6 @@ convém
 convêm
 convés
 convir
-cookie
-cooper
 coorte
 copiam
 copiar
@@ -1960,7 +1901,6 @@ coreia
 coreto
 coriza
 córnea
-corner
 cornos
 coroam
 coroar
@@ -2004,7 +1944,6 @@ couber
 couros
 cousas
 couves
-cowboy
 coziam
 cozida
 cozido
@@ -2019,7 +1958,6 @@ cravas
 cravei
 cravos
 cravou
-crayon
 creche
 credes
 credor
@@ -2086,7 +2024,6 @@ cuidei
 cuidem
 cuides
 cuidou
-cullen
 culpam
 culpar
 culpas
@@ -2155,7 +2092,6 @@ custou
 cutelo
 cutuca
 cutuco
-cyborg
 dádiva
 danada
 danado
@@ -2177,7 +2113,6 @@ darmos
 datado
 datava
 dativo
-dealer
 debata
 debate
 debati
@@ -2248,7 +2183,6 @@ deixou
 delata
 delate
 delega
-delfim
 delias
 delira
 delire
@@ -2309,7 +2243,6 @@ desfia
 desfie
 desfio
 desfiz
-design
 desova
 despem
 despes
@@ -2356,7 +2289,6 @@ diante
 diária
 diário
 dicção
-diesel
 difama
 difame
 difere
@@ -2443,7 +2375,6 @@ dobrei
 dobrem
 dobres
 dobrou
-doctor
 doçura
 doença
 doendo
@@ -2477,7 +2408,6 @@ dosado
 dossel
 dossiê
 dotado
-double
 dourar
 doutor
 doutro
@@ -2491,7 +2421,6 @@ drenou
 dribla
 drible
 driblo
-driver
 drogam
 drogar
 drogas
@@ -2509,7 +2438,6 @@ duelar
 duelou
 duende
 duplas
-duplex
 duplos
 durado
 durara
@@ -2548,7 +2476,6 @@ efetue
 eficaz
 efígie
 efusão
-egídio
 ejeção
 ejetam
 ejetar
@@ -2571,7 +2498,6 @@ elevem
 elevou
 elipse
 elisão
-elísio
 elixir
 elogia
 elogie
@@ -2676,7 +2602,6 @@ enlace
 enlaço
 enojam
 enojar
-enoque
 enorme
 enreda
 enredo
@@ -2880,7 +2805,6 @@ eterno
 etíope
 étnico
 eunuco
-europa
 evacua
 evacue
 evadem
@@ -2959,7 +2883,6 @@ expede
 expedi
 expele
 expeli
-expert
 expiar
 expiou
 expira
@@ -3215,7 +3138,6 @@ flocos
 floral
 floria
 florir
-floris
 floriu
 fluíam
 fluido
@@ -3397,9 +3319,7 @@ fuxico
 fuzila
 gabado
 gabava
-gadget
 gaiato
-gaijin
 gaiola
 gaitas
 galeão
@@ -3419,7 +3339,6 @@ gamboa
 gamela
 gancho
 gandra
-ganges
 gangue
 ganhai
 ganham
@@ -3431,7 +3350,6 @@ ganhes
 ganhou
 ganido
 gansos
-garage
 garapa
 garças
 garçom
@@ -3460,7 +3378,6 @@ gauche
 gaúcho
 gaulês
 gaveta
-gazebo
 gazela
 gazeta
 gelada
@@ -3490,7 +3407,6 @@ gérmen
 gestão
 gestor
 gestos
-gideão
 gigolô
 gilete
 ginete
@@ -3522,10 +3438,8 @@ gorado
 gordão
 gordas
 gordos
-gorete
 gorila
 gorros
-gospel
 gostam
 gostar
 gostas
@@ -3602,7 +3516,6 @@ guandu
 guarda
 guarde
 guardo
-guedes
 gueixa
 guerra
 guiada
@@ -3623,7 +3536,6 @@ habita
 habite
 habito
 hábito
-hacker
 haicai
 haikai
 hálito
@@ -3632,30 +3544,25 @@ hamada
 hangar
 harpia
 hastes
-havana
 haveis
 haverá
 haviam
 havias
 havido
-haxixe
 hebreu
 hélice
-herbal
 herdam
 herdar
 herdei
 herdem
 herdou
 herege
-hermes
 hérnia
 heróis
 herpes
 hesita
 hesite
 hesito
-hester
 hetero
 hétero
 hienas
@@ -3670,10 +3577,8 @@ honras
 honrei
 honrem
 honrou
-hóquei
 horror
 hortas
-hostel
 hostes
 hóstia
 hostil
@@ -3692,7 +3597,6 @@ ignora
 ignore
 ignoro
 igreja
-iguaçu
 iguais
 iguala
 iguale
@@ -3700,7 +3604,6 @@ igualo
 iguana
 ilegal
 ilhado
-ilíada
 iludam
 iludas
 iludem
@@ -3781,7 +3684,6 @@ indico
 índigo
 índios
 índole
-indoor
 induza
 induzi
 inepto
@@ -3818,7 +3720,6 @@ inovam
 inovar
 inovem
 inovou
-inputs
 insano
 insere
 inseri
@@ -3878,7 +3779,6 @@ isolei
 isolem
 isolou
 isopor
-itapuã
 iterar
 ituano
 jaburu
@@ -3898,7 +3798,6 @@ jantou
 jargão
 jarros
 javali
-javari
 jaziam
 jazida
 jazigo
@@ -3908,7 +3807,6 @@ jejuar
 jejuou
 jérsei
 jiboia
-jingle
 jocoso
 joelho
 jogada
@@ -3942,7 +3840,6 @@ julgar
 julgas
 julgou
 julgue
-julião
 junção
 juncos
 junino
@@ -3967,8 +3864,6 @@ kaiser
 karatê
 kibutz
 kirsch
-kitsch
-kosher
 labial
 lábios
 labora
@@ -3995,7 +3890,6 @@ ladras
 ladrou
 lambam
 lambas
-lambda
 lambem
 lamber
 lambes
@@ -4018,11 +3912,9 @@ lancho
 lanços
 lançou
 landau
-landim
 langue
 lapela
 lápide
-laptop
 largam
 largar
 largas
@@ -4056,7 +3948,6 @@ lavram
 lavrar
 lavrei
 lavrou
-layout
 lebres
 legado
 legais
@@ -4066,7 +3957,6 @@ legume
 leigos
 leilão
 leiloa
-leiria
 leitão
 leites
 leitoa
@@ -4143,13 +4033,11 @@ lindos
 linear
 língua
 linhas
-linkar
 líquen
 liquor
 lírica
 lírico
 lírios
-lisboa
 lisina
 listam
 listar
@@ -4159,7 +4047,6 @@ listem
 listou
 listra
 lisura
-living
 livrai
 livram
 livrar
@@ -4180,7 +4067,6 @@ logram
 lograr
 logrei
 logrou
-loiola
 loiras
 loiros
 lombar
@@ -4196,7 +4082,6 @@ lotear
 loteou
 loucas
 louças
-lounge
 louras
 louros
 louvai
@@ -4206,7 +4091,6 @@ louvei
 louvem
 louvor
 louvou
-loyola
 lúcido
 lucram
 lucrar
@@ -4227,9 +4111,7 @@ lutava
 lutero
 macaca
 macaco
-macacu
 maçada
-macedo
 macete
 machão
 machos
@@ -4240,10 +4122,8 @@ maciez
 macios
 macula
 mácula
-macuxi
 madame
 madona
-madras
 madura
 maduro
 mágica
@@ -4261,7 +4141,6 @@ magras
 magros
 majora
 malaca
-málaga
 malaio
 malato
 maldiz
@@ -4318,7 +4197,6 @@ mangos
 mangue
 manhãs
 manica
-manila
 manjam
 manjar
 manjou
@@ -4372,7 +4250,6 @@ mascar
 masque
 massai
 massas
-master
 máster
 mastro
 matado
@@ -4393,7 +4270,6 @@ matuto
 maxila
 máxima
 maxixe
-mayday
 mazela
 mechas
 medeia
@@ -4415,7 +4291,6 @@ medita
 medite
 medito
 médium
-medley
 medram
 medrar
 medula
@@ -4492,7 +4367,6 @@ migrou
 mijada
 mijado
 mijava
-milady
 milano
 milhão
 milhar
@@ -4559,7 +4433,6 @@ moerem
 mofado
 moinho
 moitas
-mojica
 moldam
 moldar
 moldei
@@ -4651,7 +4524,6 @@ mudado
 mudara
 mudará
 mudava
-muffin
 mugido
 mulata
 mulato
@@ -4683,7 +4555,6 @@ mutila
 mutilo
 mutual
 muvuca
-nabuco
 nações
 nadado
 nadava
@@ -4696,7 +4567,6 @@ namore
 namoro
 nanica
 nanico
-napalm
 narina
 narram
 narrar
@@ -4709,12 +4579,10 @@ nasces
 nasceu
 nascia
 nativa
-native
 nativo
 natura
 náusea
 navais
-navajo
 navega
 navego
 navios
@@ -4731,9 +4599,7 @@ neguem
 negues
 nelore
 nenhum
-nepali
 nervos
-netuno
 neural
 neutra
 neutro
@@ -4745,7 +4611,6 @@ nichos
 ninhos
 nióbio
 níquel
-nissan
 nítido
 nivela
 nivele
@@ -4847,7 +4712,6 @@ ofensa
 oferta
 oferte
 oferto
-offset
 oficia
 oficio
 ofício
@@ -4865,7 +4729,6 @@ olhara
 olhará
 olhava
 olheis
-olimpo
 olival
 olvida
 olvido
@@ -4880,7 +4743,6 @@ ondula
 oneram
 onerar
 ônibus
-online
 opacos
 operam
 operar
@@ -4916,7 +4778,6 @@ oração
 orador
 oramos
 orando
-orange
 oraram
 orarei
 orarem
@@ -4950,9 +4811,7 @@ ousado
 ousara
 ousará
 ousava
-outlet
 outono
-output
 outrem
 outros
 ouviam
@@ -4964,11 +4823,9 @@ ouvirá
 ovação
 ovário
 ovelha
-oxford
 oxidam
 oxidar
 oxidou
-oxóssi
 ozônio
 pacata
 pacato
@@ -4998,7 +4855,6 @@ pairar
 pairou
 países
 paixão
-palace
 palato
 paleio
 paleta
@@ -5058,7 +4914,6 @@ partir
 partis
 partiu
 partos
-pascal
 páscoa
 pasmar
 pasmei
@@ -5079,7 +4934,6 @@ pastor
 pastos
 pastou
 patada
-pataxó
 patela
 pateta
 patife
@@ -5230,7 +5084,6 @@ picham
 pichar
 pichei
 pichou
-pickup
 picles
 picolé
 piegas
@@ -5651,7 +5504,6 @@ ralava
 ralham
 ralhar
 ralhou
-rallye
 ramada
 ramadã
 ramona
@@ -5783,12 +5635,12 @@ refaço
 refaze
 refere
 referi
+refeza
 refina
 refine
 refino
 refira
 refiro
-reflex
 reflui
 refoga
 refrão
@@ -5838,7 +5690,10 @@ relega
 releia
 releio
 relevo
+reliam
+relido
 religa
+religo
 reluta
 relute
 reluto
@@ -5856,7 +5711,9 @@ remexe
 remexi
 remexo
 remido
+remoem
 remoer
+remoía
 remoto
 remova
 remove
@@ -5886,7 +5743,6 @@ repete
 repeti
 repita
 repito
-replay
 repõem
 réptil
 reputa
@@ -6004,6 +5860,7 @@ rodava
 rodear
 rodeia
 rodeie
+rodeio
 rodela
 rodeou
 roedor
@@ -6587,7 +6444,6 @@ sutura
 suture
 tabaco
 tabela
-tablet
 tábuas
 tabula
 tabule
@@ -6740,7 +6596,6 @@ textos
 texugo
 tibete
 tibial
-ticket
 tigela
 tigres
 tijolo
@@ -7033,7 +6888,6 @@ unirem
 uniria
 unisse
 untado
-upload
 urânio
 urdido
 uretra
@@ -7353,24 +7207,17 @@ votado
 votara
 votará
 votava
-voyeur
 vulcão
 vulgar
 vultos
-waffle
-whisky
-widget
 xadrez
 xarope
 xaveco
-xaxado
 xeique
 xereca
 xereta
 xerife
 xícara
-xiismo
-xilema
 xingam
 xingar
 xingou
