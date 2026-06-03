@@ -605,10 +605,16 @@
     const hasAnyInformation = statuses.some(Boolean);
     if (!hasAnyInformation) return statuses;
 
-    // Quando alguns tabuleiros já foram resolvidos, eles deixam de receber
-    // tentativas novas. Se todas as palavras ainda abertas já têm informação
-    // para essa letra, os quadrantes sem informação passam a aparecer como
-    // ausentes, evitando o visual de "quadrante não feito" no fim da partida.
+    const hasPositiveInformation = statuses.some(status => status === 'correct' || status === 'present');
+
+    // Se a letra já foi testada e não apareceu em nenhuma palavra aberta,
+    // os quadrantes sem informação ficam escuros também. Isso evita o caso
+    // em que 3 palavras já foram resolvidas e a letra só aparece como
+    // "não encontrada" no último quadrante.
+    if (!hasPositiveInformation && statuses.some(status => status === 'absent')) {
+      return statuses.map(() => 'absent');
+    }
+
     const openBoards = [];
     for (let b = 0; b < BOARD_COUNT; b++) {
       if (!state.solvedAt[b]) openBoards.push(b);
@@ -745,11 +751,12 @@
       state.ficha = res.ficha || state.ficha;
       state.ranking = res.ranking || state.ranking;
       saveGameLocal();
-      renderHeaderStats();
-      renderResults(res);
-      state.finishedBoardReturnArmed = false;
-      showToast('', '');
-      showView('results');
+      showToast('Resultado salvo! Carregando estatísticas...', 'success', 0);
+
+      // Força um carregamento limpo após a API terminar de salvar.
+      // Assim a tela final usa os dados já consolidados na planilha.
+      window.setTimeout(() => window.location.reload(), 250);
+      return;
     } catch (err) {
       state.pendingFinalize = true;
       saveGameLocal();
