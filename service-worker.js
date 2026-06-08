@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sexto-cache-v6';
+const CACHE_NAME = 'sexto-cache-v7';
 const APP_SHELL = [
   './',
   './index.html',
@@ -27,7 +27,6 @@ self.addEventListener('fetch', event => {
 
   if (request.method !== 'GET') return;
 
-  // Lista de palavras: tenta rede primeiro, usa cache se necessário.
   if (url.pathname.includes('/palavras/')) {
     event.respondWith(
       fetch(request).then(response => {
@@ -39,7 +38,6 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Arquivos do app: rede primeiro para facilitar atualizações.
   event.respondWith(
     fetch(request).then(response => {
       const clone = response.clone();

@@ -6,7 +6,7 @@
   const WORD_LIST_URL = CONFIG.WORD_LIST_URL || 'palavras/palavras_sexto_6_letras_filtradas_curadas.txt';
   const WORD_LENGTH = 6;
   const BOARD_COUNT = 4;
-  const MAX_ATTEMPTS = 10;
+  const MAX_ATTEMPTS = Number(CONFIG.MAX_ATTEMPTS || 9);
 
   const STORAGE_SESSION = 'sexto_session_v1';
   const STORAGE_DEVICE = 'sexto_device_id_v1';
@@ -516,6 +516,12 @@
     return Math.max(0, index - 1);
   }
 
+  function updateDeviceClass() {
+    const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 700;
+    document.documentElement.classList.toggle('is-mobile-device', isMobile);
+    document.documentElement.classList.toggle('is-desktop-device', !isMobile);
+  }
+
   function renderAll() {
     renderHeaderStats();
     renderBoards();
@@ -985,6 +991,8 @@
   }
 
   async function boot() {
+    updateDeviceClass();
+    window.addEventListener('resize', updateDeviceClass);
     attachEvents();
     showView('loading');
 

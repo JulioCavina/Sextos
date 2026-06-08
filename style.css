@@ -10,7 +10,7 @@
   --blue-2: #0b83cf;
   --green: #3aa757;
   --yellow: #d4a443;
-  --gray: #464047;
+  --gray: #39333a;
   --bad: #ff5d5d;
   --shadow: 0 18px 60px rgba(0,0,0,0.28);
   --safe-top: env(safe-area-inset-top, 0px);
@@ -55,12 +55,12 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .ghost-button { min-height: 34px; background: rgba(255,255,255,0.08); color: var(--muted); padding-inline: 14px; }
 .warning-button { background: #9d6530; width: 100%; margin-top: 12px; }
 
-.view-game { display: none; flex-direction: column; padding: calc(3px + var(--safe-top)) 8px calc(3px + var(--safe-bottom)); max-width: 430px; height: 100dvh; min-height: 100dvh; overflow: hidden; margin: 0 auto; }
+.view-game { display: none; flex-direction: column; padding: calc(2px + var(--safe-top)) 8px calc(10px + var(--safe-bottom)); max-width: 430px; height: 100dvh; min-height: 100dvh; overflow: hidden; margin: 0 auto; }
 .game-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding-bottom: 4px; scrollbar-width: none; }
 .game-scroll::-webkit-scrollbar { display: none; }
 .view-game.is-active { display: flex; }
 .game-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 2px 2px; flex: 0 0 auto; }
-.game-header h1 { margin: 0; font-size: 21px; letter-spacing: -1px; }
+.game-header h1 { margin: 0; font-size: 20px; letter-spacing: -1px; }
 .score-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 5px; flex: 0 0 auto; }
 .score-card { background: rgba(255,255,255,0.075); border: 1px solid var(--line); border-radius: 12px; padding: 4px 3px; text-align: center; min-height: 40px; }
 .score-card span { display: block; font-size: 14px; font-weight: 950; line-height: 1.02; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -76,7 +76,7 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .tile.filled { border-color: rgba(255,255,255,0.35); }
 .tile.correct { background: var(--green); border-color: var(--green); }
 .tile.present { background: var(--yellow); border-color: var(--yellow); }
-.tile.absent { background: var(--gray); border-color: var(--gray); color: #b3abb2; }
+.tile.absent { background: #39333a; border-color: #39333a; color: #a69ea5; }
 .tile.current { box-shadow: inset 0 -2px 0 rgba(255,255,255,0.26); }
 .tile.selectable { cursor: pointer; }
 .tile.cursor { outline: 2px solid rgba(22,156,234,0.92); outline-offset: 1px; }
@@ -85,13 +85,13 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .toast.error { color: var(--bad); }
 .toast.success { color: #8df7ab; }
 
-.input-panel { margin-top: 0; padding-top: 4px; padding-bottom: calc(8px + var(--safe-bottom)); flex: 0 0 auto; background: var(--bg); box-shadow: 0 -10px 24px rgba(47,40,45,0.88); }
+.input-panel { margin-top: 0; padding-top: 4px; padding-bottom: calc(16px + var(--safe-bottom)); flex: 0 0 auto; background: var(--bg); box-shadow: 0 -10px 24px rgba(47,40,45,0.88); }
 .guess-preview { display: none; }
 .preview-cell { width: 28px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.08); display: grid; place-items: center; font-size: 18px; font-weight: 950; text-transform: uppercase; }
 .keyboard { display: flex; flex-direction: column; gap: 4px; user-select: none; }
 .key-row { display: flex; gap: 3px; justify-content: center; }
-.key { height: clamp(34px, 6.1dvh, 43px); min-width: 0; flex: 1; max-width: 30px; border-radius: 8px; background: #5b5359; color: var(--text); font-size: 13px; font-weight: 950; display: grid; place-items: center; position: relative; overflow: hidden; }
-.key.big { flex: 1.65; max-width: 52px; font-size: 10px; }
+.key { height: clamp(32px, 5.7dvh, 40px); min-width: 0; flex: 1; max-width: 30px; border-radius: 8px; background: #5b5359; color: var(--text); font-size: 13px; font-weight: 950; display: grid; place-items: center; position: relative; overflow: hidden; }
+.key.big { flex: 1.6; max-width: 50px; font-size: 10px; }
 .key.correct { background: var(--green); }
 .key.present { background: var(--yellow); }
 .key.absent { background: #302b30; color: #807880; }
@@ -100,7 +100,7 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .key-segments { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; z-index: 1; opacity: 0.92; }
 .key-segments .seg { display: block; border: 1px solid rgba(255,255,255,0.035); }
 .key-segments .seg.unknown { background: transparent; }
-.key-segments .seg.absent { background: #302b30; }
+.key-segments .seg.absent { background: #272328; }
 .key-segments .seg.present { background: var(--yellow); }
 .key-segments .seg.correct { background: var(--green); }
 .key:active { transform: translateY(1px); filter: brightness(1.05); }
@@ -125,7 +125,7 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 .leader-box strong { display: block; font-size: 17px; text-align: center; }
 .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-@media (max-width: 360px) {
+@media (max-width: 360px) and (pointer: coarse) {
   .boards-grid { grid-template-columns: repeat(2, 118px); gap: 4px; }
   .board-grid { grid-template-columns: repeat(6, 15.5px); grid-auto-rows: 15.5px; gap: 2px; }
   .tile { width: 15.5px; height: 15.5px; border-radius: 3px; font-size: 8.5px; }
@@ -135,11 +135,104 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
 }
 .tile:disabled { opacity: 1; color: var(--text); cursor: default; }
 
-@media (max-height: 700px) {
+@media (max-height: 700px) and (pointer: coarse) {
   .game-header h1 { font-size: 20px; }
   .score-card { min-height: 38px; padding-block: 3px; }
   .board-grid { grid-template-columns: repeat(6, 16px); grid-auto-rows: 16px; gap: 2px; }
   .tile { width: 16px; height: 16px; font-size: 8.5px; }
   .key { height: clamp(32px, 5.8dvh, 40px); max-width: 29px; }
   .key.big { max-width: 49px; }
+}
+
+
+/* Desktop / web: não usa a compressão extrema pensada para celular.
+   A tela fica mais larga, com tabuleiros maiores e layout confortável. */
+@media (min-width: 768px) and (pointer: fine) {
+  body { overflow: auto; }
+  .app-shell { min-height: 100vh; display: grid; place-items: start center; padding: 22px; }
+  .view { min-height: auto; }
+  .view-game {
+    max-width: 960px;
+    width: min(960px, 100%);
+    height: auto;
+    min-height: calc(100vh - 44px);
+    overflow: visible;
+    padding: 18px 18px 24px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    background: rgba(52,45,50,0.55);
+  }
+  .game-scroll {
+    overflow: visible;
+    padding-bottom: 14px;
+  }
+  .game-header { padding: 2px 2px 12px; }
+  .game-header h1 { font-size: 38px; }
+  .tiny-text { font-size: 15px; }
+  .ghost-button { min-height: 44px; font-size: 16px; padding-inline: 22px; }
+  .score-strip {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .score-card {
+    min-height: 74px;
+    border-radius: 18px;
+    padding: 12px 8px;
+  }
+  .score-card span { font-size: 26px; }
+  .score-card small { font-size: 13px; margin-top: 8px; }
+  .boards-grid {
+    grid-template-columns: repeat(4, minmax(145px, 1fr));
+    gap: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .board {
+    border-radius: 18px;
+    padding: 9px;
+  }
+  .board-title { font-size: 11px; margin-bottom: 6px; }
+  .board-grid {
+    grid-template-columns: repeat(6, 21px);
+    grid-auto-rows: 21px;
+    gap: 4px;
+  }
+  .tile {
+    width: 21px;
+    height: 21px;
+    border-radius: 5px;
+    font-size: 11px;
+  }
+  .toast {
+    position: relative;
+    bottom: auto;
+    background: transparent;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .input-panel {
+    position: sticky;
+    bottom: 0;
+    max-width: 760px;
+    margin: 12px auto 0;
+    padding: 10px 10px 12px;
+    border-radius: 20px;
+    background: rgba(47,40,45,0.96);
+    box-shadow: 0 -10px 24px rgba(47,40,45,0.6);
+  }
+  .keyboard { gap: 7px; }
+  .key-row { gap: 7px; }
+  .key {
+    height: 54px;
+    max-width: 58px;
+    border-radius: 12px;
+    font-size: 19px;
+  }
+  .key.big {
+    max-width: 94px;
+    font-size: 16px;
+  }
+  .view-results { min-height: 100vh; }
+  .result-card { width: min(720px, 100%); max-height: none; }
 }
