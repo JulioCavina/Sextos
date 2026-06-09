@@ -4,5 +4,9 @@
 window.SEXTO_CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycbxI8mV2bKD2yKMazeUwMxkaE5_s3050rP8jqd1WP6b-3PW7AdCB6tpT9dvR6g3ZwJlM/exec',
   WORD_LIST_URL: 'palavras/palavras_sexto_6_letras_filtradas_curadas.txt',
-  APP_VERSION: '1.0.6'
+  APP_VERSION: '1.0.7',
+  MAX_ATTEMPTS: 9,
+  SHARE_URL: 'https://juliocavina.github.io/Sextos/',
+  API_TIMEOUT_DEFAULT_MS: 60000,
+  API_TIMEOUT_FINALIZE_MS: 120000
 };
