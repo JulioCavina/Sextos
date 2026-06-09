@@ -9,6 +9,8 @@
   const MAX_ATTEMPTS = Number(CONFIG.MAX_ATTEMPTS || 9);
 
   const STORAGE_SESSION = 'sexto_session_v1';
+  const API_TIMEOUT_DEFAULT_MS = Number(CONFIG.API_TIMEOUT_DEFAULT_MS || 60000);
+  const API_TIMEOUT_FINALIZE_MS = Number(CONFIG.API_TIMEOUT_FINALIZE_MS || 120000);
   const STORAGE_DEVICE = 'sexto_device_id_v1';
 
   const state = {
@@ -199,7 +201,7 @@
     return true;
   }
 
-  function apiCall(payload, timeoutMs = 30000) {
+  function apiCall(payload, timeoutMs = API_TIMEOUT_DEFAULT_MS) {
     return new Promise((resolve, reject) => {
       if (!ensureConfigReady()) {
         reject(new Error('API_URL não configurada.'));
@@ -520,6 +522,7 @@
     const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 700;
     document.documentElement.classList.toggle('is-mobile-device', isMobile);
     document.documentElement.classList.toggle('is-desktop-device', !isMobile);
+    document.body.dataset.device = isMobile ? 'mobile' : 'desktop';
   }
 
   function renderAll() {
@@ -533,8 +536,16 @@
     els.gameDate.textContent = state.dataJogo ? `jogo de ${formatDisplayDate(state.dataJogo)}` : '--';
     els.playerCurrentStreak.textContent = Number(state.ficha?.sequencia_vitorias_atual || 0);
     els.playerBestStreak.textContent = Number(state.ficha?.melhor_sequencia || 0);
-    els.leaderCurrentStreak.textContent = formatLeader(state.ranking?.lider_streak_atual_nome, state.ranking?.lider_streak_atual_valor);
+    els.leaderCurrentStreak.textContent = formatDailyLeader(state.ranking);
     els.leaderBestStreak.textContent = formatLeader(state.ranking?.lider_melhor_streak_nome, state.ranking?.lider_melhor_streak_valor);
+  }
+
+
+  function formatDailyLeader(ranking) {
+    const nome = ranking?.melhor_resultado_dia_nome || ranking?.lider_dia_nome || '';
+    const tentativas = Number(ranking?.melhor_resultado_dia_tentativas || ranking?.lider_dia_tentativas || 0);
+    if (!nome || !tentativas) return '-';
+    return `${nome} ${tentativas}`;
   }
 
   function formatLeader(nome, valor) {
@@ -735,6 +746,13 @@
     }
   }
 
+
+  function forceCleanReload() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('r', Date.now().toString());
+    window.location.replace(url.toString());
+  }
+
   async function finalizeGame() {
     if (state.saving || !state.session?.token || !state.partidaId) return;
     state.saving = true;
@@ -750,7 +768,7 @@
         partida_id: state.partidaId,
         data_jogo: state.dataJogo,
         tentativas: state.tentativas
-      }, 45000);
+      }, API_TIMEOUT_FINALIZE_MS);
 
       state.pendingFinalize = false;
       state.finalResult = res;
@@ -761,16 +779,25 @@
 
       // Força um carregamento limpo após a API terminar de salvar.
       // Assim a tela final usa os dados já consolidados na planilha.
-      window.setTimeout(() => window.location.reload(), 250);
+      window.setTimeout(forceCleanReload, 250);
       return;
     } catch (err) {
       state.pendingFinalize = true;
       saveGameLocal();
-      renderResults({ ok: false, erro: err.message, ficha: state.ficha, ranking: state.ranking });
-      els.retrySaveButton.classList.remove('hidden');
-      state.finishedBoardReturnArmed = false;
-      showToast('', '');
-      showView('results');
+      const msg = err && err.message ? err.message : String(err || 'Erro na API.');
+      // Quando o Apps Script demora, muitas vezes a gravação termina no servidor
+      // mesmo depois do navegador considerar timeout. Nesses casos, forçamos
+      // uma recarga para buscar o estado consolidado da planilha.
+      if (/demorou|timeout|Falha ao chamar API/i.test(msg)) {
+        showToast('A API demorou. Atualizando para conferir o resultado salvo...', 'success', 0);
+        window.setTimeout(forceCleanReload, 3500);
+      } else {
+        renderResults({ ok: false, erro: msg, ficha: state.ficha, ranking: state.ranking });
+        els.retrySaveButton.classList.remove('hidden');
+        state.finishedBoardReturnArmed = false;
+        showToast('', '');
+        showView('results');
+      }
     } finally {
       state.saving = false;
     }
@@ -794,7 +821,7 @@
     els.statWinPct.textContent = `${Number(ficha.pct_vitorias || 0)}%`;
     els.statCurrentStreak.textContent = Number(ficha.sequencia_vitorias_atual || 0);
     els.statBestStreak.textContent = Number(ficha.melhor_sequencia || 0);
-    els.modalLeaderCurrent.textContent = formatLeader(ranking.lider_streak_atual_nome, ranking.lider_streak_atual_valor);
+    els.modalLeaderCurrent.textContent = formatDailyLeader(ranking);
     els.modalLeaderBest.textContent = formatLeader(ranking.lider_melhor_streak_nome, ranking.lider_melhor_streak_valor);
 
     const dist = {};
@@ -866,7 +893,7 @@
       const canvas = document.createElement('canvas');
       const scale = 2;
       const width = 720;
-      const height = 520;
+      const height = 600;
       canvas.width = width * scale;
       canvas.height = height * scale;
       const ctx = canvas.getContext('2d');
@@ -894,12 +921,12 @@
       ctx.font = '700 30px system-ui, -apple-system, Segoe UI, sans-serif';
       ctx.fillText(`Sexto ${formatDisplayDate(state.dataJogo)}`, width / 2, 64);
 
-      const boardW = 148;
-      const gap = 18;
+      const boardW = 165;
+      const gap = 14;
       const startX = (width - (boardW * 4 + gap * 3)) / 2;
       const startY = 100;
-      const cell = 18;
-      const cellGap = 5;
+      const cell = 21;
+      const cellGap = 4;
       const solved = state.solvedAt.every(Boolean);
 
       for (let b = 0; b < BOARD_COUNT; b++) {
@@ -925,13 +952,13 @@
       ctx.fillStyle = colors.text;
       ctx.textAlign = 'left';
       ctx.font = '700 25px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText(solved ? `🔥 ${state.tentativas.length}/${MAX_ATTEMPTS}` : `☠ ${state.tentativas.length}/${MAX_ATTEMPTS}`, 48, 468);
+      ctx.fillText(solved ? `🔥 ${state.tentativas.length}/${MAX_ATTEMPTS}` : `☠ ${state.tentativas.length}/${MAX_ATTEMPTS}`, 48, 536);
       ctx.textAlign = 'right';
       ctx.font = '700 18px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText('Sexto', width - 48, 466);
+      ctx.fillText('Sexto', width - 48, 534);
       ctx.font = '500 14px system-ui, -apple-system, Segoe UI, sans-serif';
       ctx.fillStyle = colors.muted;
-      ctx.fillText(window.location.host || 'sexto', width - 48, 488);
+      ctx.fillText(window.location.host || 'sexto', width - 48, 558);
 
       canvas.toBlob((blob) => resolve(blob), 'image/png', 0.95);
     });

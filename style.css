@@ -236,3 +236,85 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
   .view-results { min-height: 100vh; }
   .result-card { width: min(720px, 100%); max-height: none; }
 }
+
+/* v1.0.7 — ajustes mobile/desktop e tabuleiros maiores no celular */
+html.is-mobile-device .view-game {
+  max-width: 430px;
+  padding-top: calc(1px + var(--safe-top));
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: calc(6px + var(--safe-bottom));
+}
+
+html.is-mobile-device .game-header {
+  padding-bottom: 1px;
+}
+
+html.is-mobile-device .game-header h1 {
+  font-size: 21px;
+}
+
+html.is-mobile-device .score-strip {
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+html.is-mobile-device .score-card {
+  min-height: 38px;
+  padding: 4px 3px;
+}
+
+html.is-mobile-device .boards-grid {
+  grid-template-columns: repeat(2, minmax(132px, 148px));
+  gap: 6px 8px;
+}
+
+html.is-mobile-device .board {
+  padding: 5px;
+  border-radius: 13px;
+}
+
+html.is-mobile-device .board-grid {
+  grid-template-columns: repeat(6, 18px);
+  grid-auto-rows: 18px;
+  gap: 2px;
+}
+
+html.is-mobile-device .tile {
+  width: 18px;
+  height: 18px;
+  font-size: 9.7px;
+}
+
+html.is-mobile-device .input-panel {
+  padding-top: 4px;
+  padding-bottom: calc(8px + var(--safe-bottom));
+}
+
+html.is-mobile-device .key {
+  height: clamp(31px, 5.25dvh, 38px);
+  max-width: 29px;
+}
+
+html.is-mobile-device .key.big {
+  max-width: 49px;
+}
+
+@media (max-width: 360px) and (pointer: coarse) {
+  html.is-mobile-device .boards-grid { grid-template-columns: repeat(2, 126px); gap: 5px; }
+  html.is-mobile-device .board-grid { grid-template-columns: repeat(6, 17px); grid-auto-rows: 17px; gap: 2px; }
+  html.is-mobile-device .tile { width: 17px; height: 17px; font-size: 9px; }
+  html.is-mobile-device .key { max-width: 27.5px; }
+  html.is-mobile-device .key.big { max-width: 47px; }
+}
+
+@media (max-height: 700px) and (pointer: coarse) {
+  html.is-mobile-device .game-header h1 { font-size: 20px; }
+  html.is-mobile-device .board-grid { grid-template-columns: repeat(6, 17px); grid-auto-rows: 17px; gap: 2px; }
+  html.is-mobile-device .tile { width: 17px; height: 17px; font-size: 9px; }
+  html.is-mobile-device .key { height: clamp(30px, 5.1dvh, 37px); max-width: 28px; }
+}
+
+/* Desktop explícito por detecção JS: mantém layout confortável do navegador. */
+html.is-desktop-device body { overflow: auto; }
+html.is-desktop-device .app-shell { min-height: 100vh; }
