@@ -3,12 +3,14 @@
 
   const CONFIG = window.SEXTO_CONFIG || {};
   const API_URL = CONFIG.API_URL || '';
-  const WORD_LIST_URL = CONFIG.WORD_LIST_URL || 'palavras/palavras_sexto_6_letras_filtradas_curadas.txt';
+  const WORD_LIST_URL = CONFIG.ACCEPTED_WORD_LIST_URL || CONFIG.WORD_LIST_URL || 'palavras/palavras_sexto_6_letras_ampla_extra.txt';
   const WORD_LENGTH = 6;
   const BOARD_COUNT = 4;
   const MAX_ATTEMPTS = Number(CONFIG.MAX_ATTEMPTS || 9);
 
-  const STORAGE_SESSION = 'sexto_session_v1';
+  const STORAGE_SESSION = 'sexto_session_v2';
+  const STORAGE_SESSION_LEGACY = 'sexto_session_v1';
+  const STORAGE_SESSION_BACKUP = 'sexto_session_backup_v1';
   const API_TIMEOUT_DEFAULT_MS = Number(CONFIG.API_TIMEOUT_DEFAULT_MS || 60000);
   const API_TIMEOUT_FINALIZE_MS = Number(CONFIG.API_TIMEOUT_FINALIZE_MS || 120000);
   const STORAGE_DEVICE = 'sexto_device_id_v1';
@@ -120,13 +122,21 @@
 
   function saveSession(session) {
     state.session = session;
-    localStorage.setItem(STORAGE_SESSION, JSON.stringify(session));
+    const raw = JSON.stringify(session);
+    localStorage.setItem(STORAGE_SESSION, raw);
+    localStorage.setItem(STORAGE_SESSION_LEGACY, raw);
+    localStorage.setItem(STORAGE_SESSION_BACKUP, raw);
+    try { sessionStorage.setItem(STORAGE_SESSION, raw); } catch (err) {}
   }
 
   function loadSession() {
     try {
-      const raw = localStorage.getItem(STORAGE_SESSION);
+      const raw = localStorage.getItem(STORAGE_SESSION)
+        || localStorage.getItem(STORAGE_SESSION_LEGACY)
+        || localStorage.getItem(STORAGE_SESSION_BACKUP)
+        || sessionStorage.getItem(STORAGE_SESSION);
       state.session = raw ? JSON.parse(raw) : null;
+      if (state.session?.token) saveSession(state.session);
     } catch (err) {
       state.session = null;
     }
@@ -136,6 +146,14 @@
   function clearSession() {
     state.session = null;
     localStorage.removeItem(STORAGE_SESSION);
+    localStorage.removeItem(STORAGE_SESSION_LEGACY);
+    localStorage.removeItem(STORAGE_SESSION_BACKUP);
+    try { sessionStorage.removeItem(STORAGE_SESSION); } catch (err) {}
+  }
+
+  function isAuthError(err) {
+    const msg = String(err?.message || err || '').toLowerCase();
+    return msg.includes('sessão inválida') || msg.includes('sessao invalida') || msg.includes('sessão expirada') || msg.includes('sessao expirada') || msg.includes('faça login novamente') || msg.includes('faca login novamente');
   }
 
   function gameStorageKey() {
@@ -334,9 +352,15 @@
         finalizeGame();
       }
     } catch (err) {
-      clearSession();
-      showView('auth');
-      setAuthMessage(err.message || 'Não consegui carregar o jogo.', 'error');
+      if (isAuthError(err)) {
+        clearSession();
+        showView('auth');
+        setAuthMessage(err.message || 'Faça login novamente.', 'error');
+      } else {
+        // Não apagar a sessão em erro temporário/timeout da API.
+        showView('auth');
+        setAuthMessage((err.message || 'Não consegui carregar o jogo.') + ' Tente abrir novamente; seu login ficou salvo.', 'error');
+      }
     }
   }
 

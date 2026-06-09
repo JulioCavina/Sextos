@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sexto-cache-v8';
+const CACHE_NAME = 'sexto-cache-v9';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,7 +8,8 @@ const APP_SHELL = [
   './manifest.json',
   './assets/icon-192.png',
   './assets/icon-512.png',
-  './palavras/palavras_sexto_6_letras_filtradas_curadas.txt'
+  './palavras/palavras_sexto_6_letras_ampla_extra.txt',
+  './palavras/palavras_sexto_respostas_ultra_refinadas_v3.txt'
 ];
 
 self.addEventListener('install', event => {
