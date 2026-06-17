@@ -827,6 +827,12 @@
     }
   }
 
+
+  function isJesusWatching() {
+    const solved = Array.isArray(state.solvedAt) ? state.solvedAt : [];
+    return solved.includes(1) && solved.includes(2);
+  }
+
   function renderResults(result) {
     const ficha = result?.ficha || state.ficha || {};
     const ranking = result?.ranking || state.ranking || {};
@@ -835,11 +841,13 @@
     els.resultTitle.textContent = 'Progresso';
     els.resultSubtitle.textContent = result?.erro
       ? `Resultado ainda não salvo: ${result.erro}`
-      : venceu === true
-        ? `Você venceu em ${result.tentativas_usadas || state.tentativas.length} tentativas.`
-        : venceu === false
-          ? 'Você foi Sextado.'
-          : 'Resultado do jogador.';
+      : (venceu === true && isJesusWatching())
+        ? 'Jesus esta olhando essa roubalheira'
+        : venceu === true
+          ? `Você venceu em ${result.tentativas_usadas || state.tentativas.length} tentativas.`
+          : venceu === false
+            ? 'Você foi Sextado.'
+            : 'Resultado do jogador.';
 
     els.statGames.textContent = Number(ficha.total_jogos || 0);
     els.statWinPct.textContent = `${Number(ficha.pct_vitorias || 0)}%`;
@@ -891,12 +899,22 @@
   function buildShareText() {
     const ficha = state.finalResult?.ficha || state.ficha || {};
     const tentativas = state.finalResult?.tentativas_usadas || state.tentativas.length;
-    const scoreAtual = Number(ficha.sequencia_vitorias_atual || 0);
+    const venceu = state.finalResult?.venceu ?? state.solvedAt.every(Boolean);
+    const scoreAtual = venceu ? Number(ficha.sequencia_vitorias_atual || 0) : 0;
     const shareUrl = CONFIG.SHARE_URL || window.location.href.split('#')[0];
+    const jesusSuffix = isJesusWatching() ? ' - Mas Jesus ficou chateado' : '';
+
+    if (!venceu) {
+      return [
+        `Sexto — ${formatDisplayDate(state.dataJogo)} 💀 0`,
+        `Fui Sextado 😩${jesusSuffix}`,
+        shareUrl
+      ].join('\n');
+    }
 
     return [
       `Sexto — ${formatDisplayDate(state.dataJogo)} 🔥 ${scoreAtual}`,
-      `Tentativas: ${tentativas}/${MAX_ATTEMPTS}`,
+      `Tentativas: ${tentativas}/${MAX_ATTEMPTS}${jesusSuffix}`,
       shareUrl
     ].join('\n');
   }
@@ -916,8 +934,8 @@
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
       const scale = 2;
-      const width = 720;
-      const height = 600;
+      const width = 900;
+      const height = 500;
       canvas.width = width * scale;
       canvas.height = height * scale;
       const ctx = canvas.getContext('2d');
@@ -945,11 +963,11 @@
       ctx.font = '700 30px system-ui, -apple-system, Segoe UI, sans-serif';
       ctx.fillText(`Sexto ${formatDisplayDate(state.dataJogo)}`, width / 2, 64);
 
-      const boardW = 165;
-      const gap = 14;
+      const boardW = 175;
+      const gap = 34;
       const startX = (width - (boardW * 4 + gap * 3)) / 2;
-      const startY = 100;
-      const cell = 21;
+      const startY = 92;
+      const cell = 25;
       const cellGap = 4;
       const solved = state.solvedAt.every(Boolean);
 
@@ -976,13 +994,13 @@
       ctx.fillStyle = colors.text;
       ctx.textAlign = 'left';
       ctx.font = '700 25px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText(solved ? `🔥 ${state.tentativas.length}/${MAX_ATTEMPTS}` : `☠ ${state.tentativas.length}/${MAX_ATTEMPTS}`, 48, 536);
+      ctx.fillText(solved ? `🔥 ${state.tentativas.length}/${MAX_ATTEMPTS}` : `☠ ${state.tentativas.length}/${MAX_ATTEMPTS}`, 48, 438);
       ctx.textAlign = 'right';
       ctx.font = '700 18px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText('Sexto', width - 48, 534);
+      ctx.fillText('Sexto', width - 48, 436);
       ctx.font = '500 14px system-ui, -apple-system, Segoe UI, sans-serif';
       ctx.fillStyle = colors.muted;
-      ctx.fillText(window.location.host || 'sexto', width - 48, 558);
+      ctx.fillText(window.location.host || 'sexto', width - 48, 460);
 
       canvas.toBlob((blob) => resolve(blob), 'image/png', 0.95);
     });

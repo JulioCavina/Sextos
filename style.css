@@ -237,7 +237,7 @@ input:focus { border-color: rgba(22,156,234,0.9); box-shadow: 0 0 0 4px rgba(22,
   .result-card { width: min(720px, 100%); max-height: none; }
 }
 
-/* v1.0.7 — ajustes mobile/desktop e tabuleiros maiores no celular */
+/* v1.0.9 — ajustes mobile/desktop e tabuleiros maiores no celular */
 html.is-mobile-device .view-game {
   max-width: 430px;
   padding-top: calc(1px + var(--safe-top));
@@ -318,3 +318,47 @@ html.is-mobile-device .key.big {
 /* Desktop explícito por detecção JS: mantém layout confortável do navegador. */
 html.is-desktop-device body { overflow: auto; }
 html.is-desktop-device .app-shell { min-height: 100vh; }
+
+
+/* v1.0.9 — tabuleiros um pouco maiores no mobile e exportação mais legível */
+html.is-mobile-device .game-header h1 {
+  font-size: 21px;
+}
+
+html.is-mobile-device .score-card {
+  min-height: 37px;
+  padding: 3px 3px;
+}
+
+html.is-mobile-device .boards-grid {
+  grid-template-columns: repeat(2, minmax(140px, 154px));
+  gap: 7px 9px;
+}
+
+html.is-mobile-device .board {
+  padding: 5px;
+  border-radius: 14px;
+}
+
+html.is-mobile-device .board-grid {
+  grid-template-columns: repeat(6, 19px);
+  grid-auto-rows: 19px;
+  gap: 2px;
+}
+
+html.is-mobile-device .tile {
+  width: 19px;
+  height: 19px;
+  font-size: 10px;
+}
+
+@media (max-width: 360px) and (pointer: coarse) {
+  html.is-mobile-device .boards-grid { grid-template-columns: repeat(2, 132px); gap: 6px; }
+  html.is-mobile-device .board-grid { grid-template-columns: repeat(6, 18px); grid-auto-rows: 18px; gap: 2px; }
+  html.is-mobile-device .tile { width: 18px; height: 18px; font-size: 9.5px; }
+}
+
+@media (max-height: 700px) and (pointer: coarse) {
+  html.is-mobile-device .board-grid { grid-template-columns: repeat(6, 18px); grid-auto-rows: 18px; gap: 2px; }
+  html.is-mobile-device .tile { width: 18px; height: 18px; font-size: 9.5px; }
+}
