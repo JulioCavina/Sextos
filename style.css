@@ -352,3 +352,124 @@ html.is-mobile-device .answer-reveal {
   }
   .answer-reveal-results { max-width: none; }
 }
+
+/* v1.0.12 — mobile: reduzir o espaço vazio entre tabuleiros e teclado.
+   A estratégia foi aumentar a ocupação vertical dos tabuleiros e compactar
+   levemente cabeçalho/placares, sem mexer na imagem compartilhada. */
+html.is-mobile-device .view-game {
+  max-width: 430px;
+  padding-top: calc(1px + var(--safe-top));
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: calc(6px + var(--safe-bottom));
+}
+
+html.is-mobile-device .game-header {
+  padding-bottom: 1px;
+}
+
+html.is-mobile-device .game-header h1 {
+  font-size: 20px;
+}
+
+html.is-mobile-device .tiny-text {
+  font-size: 10.5px;
+}
+
+html.is-mobile-device .ghost-button {
+  min-height: 32px;
+  padding-inline: 12px;
+}
+
+html.is-mobile-device .score-strip {
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+html.is-mobile-device .score-card {
+  min-height: 36px;
+  padding: 3px 3px;
+}
+
+html.is-mobile-device .score-card span {
+  font-size: 13px;
+}
+
+html.is-mobile-device .score-card small {
+  font-size: 8px;
+  margin-top: 2px;
+}
+
+html.is-mobile-device .boards-grid {
+  width: 100%;
+  max-width: 352px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-inline: 1px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 8px;
+}
+
+html.is-mobile-device .board {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 4px 6px;
+  border-radius: 13px;
+}
+
+html.is-mobile-device .board-title {
+  font-size: 8.8px;
+  margin-bottom: 5px;
+}
+
+html.is-mobile-device .board-grid {
+  grid-template-columns: repeat(6, clamp(19.2px, 5.95vw, 21.4px));
+  grid-auto-rows: clamp(19.2px, 5.95vw, 21.4px);
+  gap: 2.3px;
+}
+
+html.is-mobile-device .tile {
+  width: clamp(19.2px, 5.95vw, 21.4px);
+  height: clamp(19.2px, 5.95vw, 21.4px);
+  border-radius: 4px;
+  font-size: clamp(9.6px, 2.95vw, 10.7px);
+}
+
+html.is-mobile-device .toast {
+  min-height: 16px;
+  font-size: 11px;
+  padding: 1px 4px;
+}
+
+html.is-mobile-device .input-panel {
+  padding-top: 4px;
+  padding-bottom: calc(8px + var(--safe-bottom));
+}
+
+html.is-mobile-device .key {
+  height: clamp(31px, 5.25dvh, 38px);
+  max-width: 29px;
+}
+
+html.is-mobile-device .key.big {
+  max-width: 49px;
+}
+
+/* Só reduz de verdade em aparelhos muito estreitos; 360 px não cai mais
+   na regra compacta que deixava os tabuleiros pequenos demais. */
+@media (max-width: 329px) and (pointer: coarse) {
+  html.is-mobile-device .boards-grid {
+    max-width: 312px;
+    gap: 6px;
+  }
+  html.is-mobile-device .board-grid {
+    grid-template-columns: repeat(6, 18.3px);
+    grid-auto-rows: 18.3px;
+    gap: 2px;
+  }
+  html.is-mobile-device .tile {
+    width: 18.3px;
+    height: 18.3px;
+    font-size: 9.2px;
+  }
+}
