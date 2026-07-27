@@ -73,7 +73,9 @@
     modalLeaderBest: $('modalLeaderBest'),
     shareButton: $('shareButton'),
     backToGameButton: $('backToGameButton'),
-    retrySaveButton: $('retrySaveButton')
+    retrySaveButton: $('retrySaveButton'),
+    gameAnswersBanner: $('gameAnswersBanner'),
+    resultAnswersBanner: $('resultAnswersBanner')
   };
 
   function showView(name) {
@@ -551,9 +553,39 @@
 
   function renderAll() {
     renderHeaderStats();
+    renderAnswerReveal();
     renderBoards();
     renderGuessPreview();
     renderKeyboard();
+  }
+
+  function getSecretAnswersForDisplay() {
+    const candidates = [
+      state.respostas,
+      state.finalResult?.respostas,
+      state.finalResult?.resultado?.respostas
+    ];
+    const source = candidates.find(value => Array.isArray(value) && value.length >= BOARD_COUNT) || [];
+    return source.slice(0, BOARD_COUNT).map(value => {
+      const raw = String(value || '').trim().toLowerCase();
+      return state.wordMap.get(normalizeWord(raw)) || raw;
+    }).filter(Boolean);
+  }
+
+  function playerWon() {
+    return state.solvedAt.every(Boolean) || state.finalResult?.venceu === true;
+  }
+
+  function renderAnswerReveal() {
+    const answers = getSecretAnswersForDisplay();
+    const shouldReveal = state.finished && !playerWon() && answers.length === BOARD_COUNT;
+    const text = shouldReveal ? `Palavras: ${answers.join(', ')}` : '';
+
+    [els.gameAnswersBanner, els.resultAnswersBanner].forEach(element => {
+      if (!element) return;
+      element.textContent = text;
+      element.classList.toggle('hidden', !shouldReveal);
+    });
   }
 
   function renderHeaderStats() {
@@ -827,12 +859,6 @@
     }
   }
 
-
-  function isJesusWatching() {
-    const solved = Array.isArray(state.solvedAt) ? state.solvedAt : [];
-    return solved.includes(1) && solved.includes(2);
-  }
-
   function renderResults(result) {
     const ficha = result?.ficha || state.ficha || {};
     const ranking = result?.ranking || state.ranking || {};
@@ -841,13 +867,11 @@
     els.resultTitle.textContent = 'Progresso';
     els.resultSubtitle.textContent = result?.erro
       ? `Resultado ainda não salvo: ${result.erro}`
-      : (venceu === true && isJesusWatching())
-        ? 'Jesus esta olhando essa roubalheira'
-        : venceu === true
-          ? `Você venceu em ${result.tentativas_usadas || state.tentativas.length} tentativas.`
-          : venceu === false
-            ? 'Você foi Sextado.'
-            : 'Resultado do jogador.';
+      : venceu === true
+        ? `Você venceu em ${result.tentativas_usadas || state.tentativas.length} tentativas.`
+        : venceu === false
+          ? 'Você foi Sextado.'
+          : 'Resultado do jogador.';
 
     els.statGames.textContent = Number(ficha.total_jogos || 0);
     els.statWinPct.textContent = `${Number(ficha.pct_vitorias || 0)}%`;
@@ -861,6 +885,7 @@
     dist.perdas = Number(ficha.dist_perdas || 0);
     renderDistribution(dist);
     els.retrySaveButton.classList.toggle('hidden', !state.pendingFinalize);
+    renderAnswerReveal();
   }
 
   function renderDistribution(dist) {
@@ -899,22 +924,21 @@
   function buildShareText() {
     const ficha = state.finalResult?.ficha || state.ficha || {};
     const tentativas = state.finalResult?.tentativas_usadas || state.tentativas.length;
-    const venceu = state.finalResult?.venceu ?? state.solvedAt.every(Boolean);
+    const venceu = state.solvedAt.every(Boolean) || state.finalResult?.venceu === true;
     const scoreAtual = venceu ? Number(ficha.sequencia_vitorias_atual || 0) : 0;
     const shareUrl = CONFIG.SHARE_URL || window.location.href.split('#')[0];
-    const jesusSuffix = isJesusWatching() ? ' - Mas Jesus ficou chateado' : '';
 
     if (!venceu) {
       return [
-        `Sexto — ${formatDisplayDate(state.dataJogo)} 💀 0`,
-        `Fui Sextado 😩${jesusSuffix}`,
+        `Sexto — ${formatDisplayDate(state.dataJogo)} 💀 ${scoreAtual}`,
+        'Fui Sextado 😩',
         shareUrl
       ].join('\n');
     }
 
     return [
       `Sexto — ${formatDisplayDate(state.dataJogo)} 🔥 ${scoreAtual}`,
-      `Tentativas: ${tentativas}/${MAX_ATTEMPTS}${jesusSuffix}`,
+      `Tentativas: ${tentativas}/${MAX_ATTEMPTS}`,
       shareUrl
     ].join('\n');
   }
@@ -934,7 +958,7 @@
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
       const scale = 2;
-      const width = 900;
+      const width = 760;
       const height = 500;
       canvas.width = width * scale;
       canvas.height = height * scale;
@@ -954,19 +978,21 @@
 
       ctx.fillStyle = colors.bg;
       ctx.fillRect(0, 0, width, height);
-      roundRect(ctx, 18, 18, width - 36, height - 36, 14);
+      roundRect(ctx, 16, 16, width - 32, height - 32, 14);
       ctx.fillStyle = colors.card;
       ctx.fill();
 
       ctx.fillStyle = colors.text;
       ctx.textAlign = 'center';
       ctx.font = '700 30px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText(`Sexto ${formatDisplayDate(state.dataJogo)}`, width / 2, 64);
+      ctx.fillText(`Sexto ${formatDisplayDate(state.dataJogo)}`, width / 2, 58);
 
-      const boardW = 175;
-      const gap = 34;
+      const boardW = 170;
+      const gap = 12;
       const startX = (width - (boardW * 4 + gap * 3)) / 2;
-      const startY = 92;
+      // Dá mais respiro entre o título e os quatro tabuleiros.
+      // Os números e as grades descem juntos, sem encostar no rodapé.
+      const startY = 112;
       const cell = 25;
       const cellGap = 4;
       const solved = state.solvedAt.every(Boolean);
@@ -994,13 +1020,13 @@
       ctx.fillStyle = colors.text;
       ctx.textAlign = 'left';
       ctx.font = '700 25px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText(solved ? `🔥 ${state.tentativas.length}/${MAX_ATTEMPTS}` : `☠ ${state.tentativas.length}/${MAX_ATTEMPTS}`, 48, 438);
+      ctx.fillText(solved ? `🔥 ${state.tentativas.length}/${MAX_ATTEMPTS}` : `☠ ${state.tentativas.length}/${MAX_ATTEMPTS}`, 48, 448);
       ctx.textAlign = 'right';
       ctx.font = '700 18px system-ui, -apple-system, Segoe UI, sans-serif';
-      ctx.fillText('Sexto', width - 48, 436);
+      ctx.fillText('Sexto', width - 48, 446);
       ctx.font = '500 14px system-ui, -apple-system, Segoe UI, sans-serif';
       ctx.fillStyle = colors.muted;
-      ctx.fillText(window.location.host || 'sexto', width - 48, 460);
+      ctx.fillText(window.location.host || 'sexto', width - 48, 470);
 
       canvas.toBlob((blob) => resolve(blob), 'image/png', 0.95);
     });
