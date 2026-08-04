@@ -14,6 +14,23 @@
   const API_TIMEOUT_DEFAULT_MS = Number(CONFIG.API_TIMEOUT_DEFAULT_MS || 60000);
   const API_TIMEOUT_FINALIZE_MS = Number(CONFIG.API_TIMEOUT_FINALIZE_MS || 120000);
   const STORAGE_DEVICE = 'sexto_device_id_v1';
+  const ANSWER_CODE_VERSION = 1;
+
+  const BASE_CODE_TO_CHAR = Object.freeze({
+    1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g',
+    8: 'h', 9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm',
+    14: 'n', 15: 'o', 16: 'p', 17: 'q', 18: 'r', 19: 's',
+    20: 't', 21: 'u', 22: 'v', 23: 'w', 24: 'x', 25: 'y', 26: 'z',
+
+    27: 'á', 28: 'à', 29: 'â', 30: 'ã', 31: 'ä', 32: 'å',
+    33: 'é', 34: 'è', 35: 'ê', 36: 'ë',
+    37: 'í', 38: 'ì', 39: 'î', 40: 'ï',
+    41: 'ó', 42: 'ò', 43: 'ô', 44: 'õ', 45: 'ö',
+    46: 'ú', 47: 'ù', 48: 'û', 49: 'ü',
+    50: 'ç',
+    51: 'ý', 52: 'ÿ',
+    53: 'ñ', 54: 'æ', 55: 'œ'
+  });
 
   const state = {
     session: null,
@@ -111,6 +128,33 @@
     if (!dateKey || !/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return dateKey || '--';
     const [y, m, d] = dateKey.split('-');
     return `${d}/${m}/${y}`;
+  }
+
+  function dailyAnswerIncrement(dateKey) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateKey || ''));
+    if (!match) throw new Error('Data do jogo inválida para decodificação.');
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    return 100 + ((((year % 100) * 37) + (month * 19) + (day * 43)) % 900);
+  }
+
+  function decodeSecretWord(codes, dateKey) {
+    if (!Array.isArray(codes) || codes.length !== WORD_LENGTH) return '';
+    const increment = dailyAnswerIncrement(dateKey);
+    const chars = codes.map(value => BASE_CODE_TO_CHAR[Number(value) - increment] || '');
+    return chars.every(Boolean) ? chars.join('') : '';
+  }
+
+  function decodeSecretAnswers(encodedAnswers, dateKey, codeVersion) {
+    if (!Array.isArray(encodedAnswers) || encodedAnswers.length !== BOARD_COUNT) return [];
+    if (Number(codeVersion || ANSWER_CODE_VERSION) !== ANSWER_CODE_VERSION) {
+      throw new Error('Versão de codificação das respostas não reconhecida.');
+    }
+    const answers = encodedAnswers.map(codes => decodeSecretWord(codes, dateKey));
+    return answers.length === BOARD_COUNT && answers.every(word => Array.from(word).length === WORD_LENGTH)
+      ? answers
+      : [];
   }
 
   function makeDeviceId() {
@@ -340,7 +384,12 @@
     try {
       if (!state.wordSet.size) await loadWordList();
 
-      const res = await apiCall({ acao: 'getEstadoInicial', token: state.session.token, device_id: makeDeviceId() });
+      const res = await apiCall({
+        acao: 'getEstadoInicial',
+        token: state.session.token,
+        device_id: makeDeviceId(),
+        codigo_versao_aceita: ANSWER_CODE_VERSION
+      });
       applyInitialState(res);
       showView('game');
       renderAll();
@@ -369,8 +418,22 @@
   function applyInitialState(res) {
     state.dataJogo = res.data_jogo;
     state.partidaId = res.partida?.partida_id;
-    state.respostas = res.respostas || [];
+
+    const decodedAnswers = decodeSecretAnswers(
+      res.respostas_codigo,
+      state.dataJogo,
+      res.codigo_versao
+    );
+
+    // Compatibilidade temporária com a API antiga durante a troca de versão.
+    state.respostas = decodedAnswers.length === BOARD_COUNT
+      ? decodedAnswers
+      : (res.respostas || []);
     state.respostasNorm = (res.respostas_normalizadas || state.respostas.map(normalizeWord)).slice(0, BOARD_COUNT);
+
+    if (state.respostas.length !== BOARD_COUNT || state.respostasNorm.length !== BOARD_COUNT) {
+      throw new Error('A API não retornou as quatro respostas codificadas corretamente.');
+    }
     state.ficha = res.ficha || {};
     state.ranking = res.ranking || {};
     state.partidaServidor = res.partida || {};

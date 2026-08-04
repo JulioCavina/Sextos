@@ -4,7 +4,7 @@ window.SEXTO_CONFIG = {
   ACCEPTED_WORD_LIST_URL: 'palavras/palavras_sexto_6_letras_ampla_extra.txt',
   SECRET_WORD_LIST_URL: 'palavras/palavras_sexto_respostas_ultra_refinadas_v3.txt',
   WORD_LIST_URL: 'palavras/palavras_sexto_6_letras_ampla_extra.txt',
-  APP_VERSION: '1.0.12',
+  APP_VERSION: '1.0.13',
   MAX_ATTEMPTS: 9,
   SHARE_URL: 'https://juliocavina.github.io/Sextos/',
   API_TIMEOUT_DEFAULT_MS: 60000,
